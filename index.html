@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UFO Bắt Người 3D - Trắc Nghiệm Triết Học Mác - Lênin</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js r128 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #050816;
+            color: #f8fafc;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Sci-Fi Glassmorphism */
+        .sci-glass {
+            background: rgba(10, 18, 42, 0.82);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            box-shadow: 0 0 25px rgba(14, 165, 233, 0.15);
+        }
+
+        .sci-glass-emerald {
+            background: rgba(6, 28, 30, 0.88);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(52, 211, 153, 0.45);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.25);
+        }
+
+        /* Neon Buttons */
+        .btn-ufo {
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #6366f1 100%);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.45), 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .btn-ufo:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.75), 0 6px 16px rgba(0, 0, 0, 0.5);
+        }
+        .btn-ufo:active:not(:disabled) {
+            transform: translateY(1px) scale(0.98);
+        }
+        .btn-ufo:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .btn-beam {
+            background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .btn-beam:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 35px rgba(52, 211, 153, 0.8);
+        }
+
+        /* Floating 3D Name Tags projected to 2D */
+        #labels-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 5;
+        }
+
+        .student-label {
+            position: absolute;
+            transform: translate(-50%, -100%);
+            white-space: nowrap;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            background: rgba(10, 18, 42, 0.82);
+            backdrop-filter: blur(4px);
+            color: #f1f5f9;
+            border: 1px solid rgba(56, 189, 248, 0.45);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+            will-change: transform, left, top;
+            pointer-events: none;
+        }
+        .student-label::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 4px 4px 0;
+            border-style: solid;
+            border-color: rgba(56, 189, 248, 0.6) transparent transparent transparent;
+        }
+
+        .student-label.scanning {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: #0f172a;
+            border: 2px solid #ffffff;
+            font-size: 12px;
+            font-weight: 800;
+            z-index: 30;
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.9);
+            transform: translate(-50%, -120%) scale(1.2);
+        }
+
+        .student-label.abducted {
+            background: linear-gradient(90deg, #10b981, #34d399);
+            color: #022c22;
+            border: 2px solid #ffffff;
+            font-size: 14px;
+            font-weight: 900;
+            z-index: 40;
+            box-shadow: 0 0 25px rgba(52, 211, 153, 1);
+            transform: translate(-50%, -135%) scale(1.35);
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(52, 211, 153, 0.4); }
+            50% { box-shadow: 0 0 45px rgba(52, 211, 153, 0.85); }
+        }
+        .abduct-banner-glow {
+            animation: pulseGlow 1.8s infinite ease-in-out;
+        }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        .float-anim {
+            animation: floatSlow 3s ease-in-out infinite;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(56, 189, 248, 0.45);
+            border-radius: 8px;
+        }
+
+        .option-card {
+            transition: all 0.15s ease;
+        }
+        .option-card:hover:not(.locked) {
+            transform: translateX(4px);
+            border-color: #38bdf8;
+            background: rgba(30, 58, 138, 0.45);
+        }
+
+        /* ===== HIỆU ỨNG NÂNG CẤP ===== */
+        @keyframes popIn{0%{opacity:0;transform:scale(.82) translateY(24px)}100%{opacity:1;transform:none}}
+        #question-modal>div,#abducted-reveal-modal>div,#summary-modal>div,#roster-modal>div{animation:popIn .5s cubic-bezier(.34,1.56,.64,1)}
+        @keyframes shimmer{to{background-position:200% center}}
+        #reveal-student-name{background-size:200% auto;animation:shimmer 2.2s linear infinite}
+        @keyframes btnPulse{0%,100%{box-shadow:0 0 18px rgba(16,185,129,.5)}50%{box-shadow:0 0 42px rgba(52,211,153,.95)}}
+        #btn-abduct-trigger:not(:disabled){animation:btnPulse 1.8s ease-in-out infinite}
+        #fx-vignette{position:fixed;inset:0;z-index:4;pointer-events:none;
+            background:radial-gradient(ellipse at center,transparent 55%,rgba(2,6,23,.75) 100%)}
+        #fx-scan{position:fixed;inset:0;z-index:4;pointer-events:none;opacity:.07;
+            background:repeating-linear-gradient(0deg,#fff 0 1px,transparent 1px 3px)}
+        .option-card:hover:not(.locked){box-shadow:0 0 22px rgba(56,189,248,.45)}
+        .student-label.scanning{animation:btnPulse .5s ease-in-out infinite}
+        #fx-confetti{position:fixed;inset:0;z-index:70;pointer-events:none}
+        /* --- đẹp hơn --- */
+        @keyframes borderFlow{0%,100%{border-color:rgba(56,189,248,.4)}50%{border-color:rgba(52,211,153,.85)}}
+        #question-modal>div,#summary-modal>div{animation:popIn .5s cubic-bezier(.34,1.56,.64,1),borderFlow 3.5s ease-in-out infinite}
+        #quiz-question-text{text-shadow:0 0 18px rgba(56,189,248,.4)}
+        header h1.text-slate-100{background:linear-gradient(90deg,#e2e8f0,#7dd3fc,#a7f3d0,#e2e8f0);background-size:200% auto;
+            -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 5s linear infinite}
+        .sci-glass{box-shadow:0 0 25px rgba(14,165,233,.18),inset 0 1px 0 rgba(255,255,255,.08)}
+        .option-card{background-image:linear-gradient(100deg,rgba(255,255,255,.04),transparent 40%)}
+        #progress-dots>div:not(.bg-slate-800\/70){transition:all .3s}
+    </style>
+</head>
+<body class="relative select-none">
+
+    <!-- 3D Canvas Container -->
+    <div id="canvas-container" class="absolute inset-0 z-0"></div>
+
+    <!-- Floating 2D Name Labels synced to 3D Characters -->
+    <div id="labels-container"></div>
+
+    <!-- TOP HUD BAR -->
+    <header class="absolute top-0 left-0 right-0 z-20 p-3 md:p-4 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+        <!-- Brand & Topic -->
+        <div class="sci-glass rounded-2xl px-4 py-2 flex items-center gap-3 pointer-events-auto">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center text-slate-950 shadow-lg shadow-emerald-500/30">
+                <i class="text-lg" style="font-style:normal">🧑‍🚀</i>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-400">UFO BẮT NGƯỜI 3D</span>
+                    <span class="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 px-2 py-0.5 rounded-full font-semibold">Triết Học Mác - Lênin</span>
+                </div>
+                <h1 class="text-xs md:text-sm font-bold text-slate-100 line-clamp-1">
+                    Nguồn gốc, bản chất & các giai đoạn của quá trình nhận thức
+                </h1>
+            </div>
+        </div>
+
+        <!-- Status & Quick Controls -->
+        <div class="flex items-center gap-2 pointer-events-auto">
+            <!-- Remaining Students Counter -->
+            <div class="sci-glass rounded-2xl px-3 py-1.5 flex items-center gap-2">
+                <i class="text-cyan-400 text-sm" style="font-style:normal">👥</i>
+                <div class="text-xs">
+                    <span class="text-slate-400 block leading-none text-[10px]">Dưới đất</span>
+                    <span id="hud-remaining-count" class="font-extrabold text-sm text-white">20</span>
+                </div>
+            </div>
+
+            <!-- Question Progress Counter -->
+            <div class="sci-glass rounded-2xl px-3 py-1.5 flex items-center gap-2">
+                <i class="text-emerald-400 text-sm" style="font-style:normal">❓</i>
+                <div class="text-xs">
+                    <span class="text-slate-400 block leading-none text-[10px]">Tiến độ</span>
+                    <span id="hud-question-progress" class="font-extrabold text-sm text-emerald-300">0 / 5</span>
+                </div>
+            </div>
+
+            <!-- Open Class Roster Modal Button -->
+            <button id="btn-open-roster" onclick="openRosterModal()" class="sci-glass hover:border-cyan-400 text-cyan-300 hover:text-white rounded-2xl px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 transition" title="Danh sách lớp">
+                <i class="" style="font-style:normal">📋</i>
+                <span class="hidden sm:inline">Danh Sách Lớp</span>
+            </button>
+
+            <!-- Toggle Audio -->
+            <button id="btn-toggle-sound" onclick="toggleSound()" class="sci-glass hover:border-cyan-400 text-cyan-300 hover:text-white rounded-2xl w-9 h-9 flex items-center justify-center transition" title="Âm thanh">
+                <i id="icon-sound" class="text-xs" style="font-style:normal">🔊</i>
+            </button>
+
+            <!-- Reset Camera -->
+            <button onclick="resetCameraView()" class="sci-glass hover:border-cyan-400 text-slate-300 hover:text-white rounded-2xl w-9 h-9 flex items-center justify-center transition" title="Đặt lại góc nhìn">
+                <i class="text-xs" style="font-style:normal">🎥</i>
+            </button>
+        </div>
+    </header>
+
+    <!-- QUESTION STEP DOTS (TOP CENTER BELOW HEADER) -->
+    <div class="absolute top-18 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 pointer-events-none">
+        <div id="progress-dots" class="sci-glass px-3.5 py-1 rounded-full flex items-center gap-2">
+            <!-- Dynamically populated 5 dots -->
+        </div>
+    </div>
+
+    <!-- BOTTOM ACTION CONTROLS -->
+    <div id="bottom-action-bar" class="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 w-11/12 max-w-lg pointer-events-auto">
+        <div id="scene-hint" class="text-[11px] text-cyan-200/80 bg-slate-950/70 px-3 py-0.5 rounded-full border border-cyan-500/20 flex items-center gap-1.5">
+            <i class="text-cyan-400" style="font-style:normal">👆</i>
+            <span>Kéo chuột/chạm để xoay 3D • Cuộn để thu phóng</span>
+        </div>
+
+        <div class="flex items-center gap-3 w-full justify-center">
+            <button id="btn-abduct-trigger" onclick="startRandomAbduction()" class="btn-beam text-slate-950 font-black text-sm md:text-base px-6 py-3.5 rounded-2xl flex items-center justify-center gap-2.5 w-full sm:w-auto min-w-[280px] tracking-wide uppercase">
+                <i class="text-lg animate-bounce" style="font-style:normal">🚀</i>
+                <span id="btn-abduct-text">UFO BẮT NGƯỜI (CÂU 1/5)</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 1. MODAL: CLASS ROSTER INPUT -->
+    <div id="roster-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="sci-glass rounded-3xl max-w-2xl w-full p-6 md:p-8 border border-cyan-400/40 shadow-2xl">
+            <div class="flex items-start justify-between gap-4 mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-300">
+                        <i class="text-xl" style="font-style:normal">👥</i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg md:text-xl font-extrabold text-white">Nhập Danh Sách Lớp Học</h2>
+                        <p class="text-xs text-slate-300">Copy và dán danh sách họ tên (mỗi dòng 1 người). Sẽ có bấy nhiêu nhân vật 3D xuất hiện!</p>
+                    </div>
+                </div>
+                <button onclick="closeRosterModal()" class="text-slate-400 hover:text-white bg-slate-800/70 hover:bg-slate-700 w-8 h-8 rounded-xl flex items-center justify-center transition">
+                    <i class="" style="font-style:normal">✕</i>
+                </button>
+            </div>
+
+            <div class="mb-4">
+                <div class="flex items-center justify-between text-xs font-semibold text-cyan-300 mb-2">
+                    <span><i class="mr-1" style="font-style:normal">📋</i> Dán danh sách Họ và Tên:</span>
+                    <span id="roster-line-counter" class="bg-cyan-500/20 border border-cyan-400/30 px-2.5 py-0.5 rounded-full">20 học sinh</span>
+                </div>
+                <textarea id="roster-textarea" rows="7" oninput="updateRosterCounter()"
+                    class="w-full rounded-2xl bg-slate-900/90 border border-slate-700 focus:border-cyan-400 focus:outline-none p-3.5 text-sm text-slate-100 font-medium leading-relaxed select-text"
+                    placeholder="Nguyễn Văn An&#10;Trần Thị Bích Ngọc..."></textarea>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                <div class="flex items-center gap-2">
+                    <button onclick="loadSampleRoster()" class="text-xs bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-600 px-3 py-2 rounded-xl font-semibold transition">
+                        <i class="mr-1" style="font-style:normal">✨</i> Danh sách mẫu (20)
+                    </button>
+                    <button onclick="clearRosterInput()" class="text-xs bg-slate-800 hover:bg-rose-950/60 text-rose-300 border border-slate-600 px-3 py-2 rounded-xl font-semibold transition">
+                        <i class="mr-1" style="font-style:normal">🗑️</i> Xóa trắng
+                    </button>
+                </div>
+
+                <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+                    <input type="checkbox" id="chk-auto-question" checked class="rounded text-emerald-500 focus:ring-0 w-4 h-4 accent-emerald-400">
+                    <span>Tự động mở câu hỏi sau 3 giây</span>
+                </label>
+            </div>
+
+            <div class="flex items-center justify-end gap-3">
+                <button onclick="applyRosterAndSpawn(true)" class="btn-ufo text-slate-950 font-black text-sm px-6 py-3.5 rounded-2xl flex items-center gap-2 w-full sm:w-auto justify-center">
+                    <i class="" style="font-style:normal">🚀</i>
+                    <span>CẬP NHẬT ĐỘI HÌNH 3D & BẮT ĐẦU</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. OVERLAY: SELECTED STUDENT REVEAL -->
+    <div id="abducted-reveal-modal" class="fixed inset-0 z-30 pointer-events-none hidden flex-col items-center justify-center p-4 bg-slate-950/45 backdrop-blur-[3px]">
+        <div class="sci-glass-emerald abduct-banner-glow rounded-3xl max-w-xl w-full p-6 text-center pointer-events-auto">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-extrabold uppercase tracking-widest mb-3">
+                <i class="animate-pulse" style="font-style:normal">📡</i>
+                <span>Tia kéo UFO đã bắt trúng mục tiêu!</span>
+            </div>
+
+            <p class="text-slate-300 text-xs font-semibold uppercase tracking-wider mb-1">Người chơi trả lời <span id="reveal-q-num" class="text-emerald-400 font-bold">Câu 1/5</span>:</p>
+
+            <div class="my-3 py-3.5 px-5 rounded-2xl bg-slate-950/80 border-2 border-emerald-400/70 shadow-inner">
+                <h2 id="reveal-student-name" class="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-cyan-200 to-emerald-300 tracking-tight">
+                    NGUYỄN VĂN A
+                </h2>
+            </div>
+
+            <p id="reveal-countdown-text" class="text-xs text-emerald-200/90 mb-4 font-medium">
+                Mở buồng câu hỏi trong <span id="reveal-timer-sec" class="font-extrabold text-white text-sm">3</span> giây...
+            </p>
+
+            <div class="flex items-center justify-center">
+                <button onclick="openQuestionModalNow()" class="btn-beam text-slate-950 font-black text-sm px-6 py-3 rounded-2xl flex items-center gap-2 shadow-xl">
+                    <span>MỞ CÂU HỎI NGAY</span>
+                    <i class="" style="font-style:normal">→</i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. MODAL: QUIZ QUESTION SCREEN -->
+    <div id="question-modal" class="fixed inset-0 z-40 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-3 sm:p-6 overflow-y-auto">
+        <div class="sci-glass rounded-3xl max-w-3xl w-full p-5 sm:p-7 border border-cyan-400/50 shadow-2xl my-auto">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-700/80">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center text-emerald-300">
+                        <i class="text-lg" style="font-style:normal">✅</i>
+                    </div>
+                    <div>
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold block">Người trả lời trên UFO:</span>
+                        <span id="quiz-student-name" class="text-base font-extrabold text-emerald-300">Nguyễn Văn An</span>
+                    </div>
+                </div>
+                <span id="quiz-badge-number" class="px-3.5 py-1 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 font-black text-xs">
+                    CÂU HỎI 1 / 5
+                </span>
+            </div>
+
+            <div class="mb-5">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-cyan-400 mb-1">
+                    <i class="mr-1" style="font-style:normal">📖</i> Triết học Mác - Lênin
+                </div>
+                <h3 id="quiz-question-text" class="text-base sm:text-lg md:text-xl font-extrabold text-white leading-snug">
+                    Câu 1: Theo triết học Mác - Lênin, nguồn gốc nội dung của nhận thức là gì?
+                </h3>
+            </div>
+
+            <div id="quiz-options-container" class="space-y-2.5 mb-5">
+                <!-- Options -->
+            </div>
+
+            <div id="quiz-explanation-box" class="hidden rounded-2xl p-4 mb-5 border">
+                <div class="flex items-start gap-3">
+                    <div id="quiz-feedback-icon" class="text-xl mt-0.5"></div>
+                    <div class="flex-1">
+                        <h4 id="quiz-feedback-title" class="font-extrabold text-sm mb-1">Chính xác!</h4>
+                        <p id="quiz-explanation-text" class="text-xs sm:text-sm text-slate-200 leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-1">
+                <div class="text-xs text-slate-400">
+                    <span id="quiz-status-hint">Hãy chọn 1 trong 4 đáp án A, B, C hoặc D</span>
+                </div>
+                <button id="btn-next-round" onclick="finishCurrentQuestion()" class="hidden btn-ufo text-slate-950 font-black text-sm px-5 py-3 rounded-2xl items-center gap-2">
+                    <span id="btn-next-round-text">TIẾP TỤC BẮT NGƯỜI</span>
+                    <i class="" style="font-style:normal">🚀</i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. MODAL: FINAL SUMMARY -->
+    <div id="summary-modal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-lg hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="sci-glass rounded-3xl max-w-3xl w-full p-6 sm:p-7 border border-emerald-400/50 shadow-2xl my-auto text-center">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 mx-auto flex items-center justify-center text-slate-950 shadow-xl shadow-emerald-500/30 mb-3 float-anim">
+                <i class="text-2xl" style="font-style:normal">🏆</i>
+            </div>
+
+            <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-400 bg-emerald-500/15 px-3 py-1 rounded-full border border-emerald-400/30">
+                HOÀN THÀNH 5 CÂU HỎI TRẮC NGHIỆM
+            </span>
+            <h2 class="text-xl sm:text-2xl font-black text-white mt-2 mb-1">
+                Báo Cáo Chiến Dịch UFO Bắt Người
+            </h2>
+            <p class="text-xs text-slate-300 mb-5">
+                Chủ đề: Nguồn gốc, bản chất nhận thức và các giai đoạn nhận thức
+            </p>
+
+            <div class="grid grid-cols-3 gap-3 max-w-md mx-auto mb-5">
+                <div class="bg-slate-900/80 border border-slate-700 rounded-2xl p-2.5">
+                    <span class="text-[11px] text-slate-400 block">Tổng câu</span>
+                    <span class="text-lg font-black text-cyan-400">5</span>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-700 rounded-2xl p-2.5">
+                    <span class="text-[11px] text-slate-400 block">Trả lời đúng</span>
+                    <span id="summary-correct-count" class="text-lg font-black text-emerald-400">5</span>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-700 rounded-2xl p-2.5">
+                    <span class="text-[11px] text-slate-400 block">Tỷ lệ</span>
+                    <span id="summary-accuracy" class="text-lg font-black text-amber-300">100%</span>
+                </div>
+            </div>
+
+            <div class="text-left bg-slate-900/75 border border-slate-700/80 rounded-2xl p-3.5 mb-5 max-h-56 overflow-y-auto">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-cyan-300 mb-2.5">
+                    <i class="mr-1" style="font-style:normal">📝</i> Lịch sử 5 người chơi đã được UFO chọn:
+                </h3>
+                <div id="summary-history-list" class="space-y-2"></div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <button onclick="playAgainKeepRemaining()" class="btn-beam text-slate-950 font-black text-xs sm:text-sm px-5 py-3 rounded-2xl flex items-center gap-2">
+                    <i class="" style="font-style:normal">🔄</i>
+                    <span>CHƠI LƯỢT MỚI (GIỮ DANH SÁCH)</span>
+                </button>
+                <button onclick="openRosterModalFromSummary()" class="sci-glass hover:border-cyan-400 text-cyan-300 hover:text-white font-bold text-xs sm:text-sm px-4 py-3 rounded-2xl flex items-center gap-2 transition">
+                    <i class="" style="font-style:normal">📋</i>
+                    <span>ĐỔI DANH SÁCH LỚP</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lớp hiệu ứng nâng cấp -->
+    <div id="fx-vignette"></div><div id="fx-scan"></div>
+    <canvas id="fx-confetti"></canvas>
+
+    <script>
+        /********************************************************************
+         * 1. QUIZ DATA
+         ********************************************************************/
+        const QUESTIONS = [
+            {
+                id: 1,
+                question: "Câu 1: Theo triết học Mác - Lênin, nguồn gốc nội dung của nhận thức là gì?",
+                options: [
+                    { key: "A", text: "Ý thức của con người." },
+                    { key: "B", text: "Thế giới khách quan." },
+                    { key: "C", text: "Trực giác của con người." },
+                    { key: "D", text: "Ý niệm tuyệt đối." }
+                ],
+                correct: "B",
+                explanation: "Đáp án đúng: B (Thế giới khách quan tồn tại bên ngoài và độc lập với ý thức con người, cung cấp thông tin ban đầu để con người hình thành hiểu biết)."
+            },
+            {
+                id: 2,
+                question: "Câu 2: Theo quan điểm triết học Mác - Lênin, thực tiễn đóng vai trò gì đối với quá trình nhận thức?",
+                options: [
+                    { key: "A", text: "Là cơ sở, động lực, mục đích của nhận thức và là tiêu chuẩn kiểm tra chân lý." },
+                    { key: "B", text: "Chỉ là mục đích cuối cùng của quá trình nhận thức." },
+                    { key: "C", text: "Là kết quả của quá trình tư duy trừu tượng." },
+                    { key: "D", text: "Là sự phản ánh thụ động, máy móc." }
+                ],
+                correct: "A",
+                explanation: "Đáp án đúng: A (Thực tiễn giữ vai trò là cơ sở, động lực, mục đích của nhận thức và là tiêu chuẩn kiểm tra chân lý)."
+            },
+            {
+                id: 3,
+                question: "Câu 3: Bản chất của nhận thức theo triết học Mác - Lênin là gì?",
+                options: [
+                    { key: "A", text: "Sự sao chép nguyên xi hiện thực khách quan vào bộ óc con người." },
+                    { key: "B", text: "Quá trình tạo ra thế giới khách quan từ ý thức con người." },
+                    { key: "C", text: "Quá trình phản ánh tích cực, tự giác và sáng tạo thế giới khách quan vào bộ óc con người trên cơ sở thực tiễn." },
+                    { key: "D", text: "Sự hồi tưởng lại những ý niệm đã có sẵn trong linh hồn." }
+                ],
+                correct: "C",
+                explanation: "Đáp án đúng: C (Nhận thức là quá trình phản ánh tích cực, tự giác và sáng tạo thế giới khách quan vào bộ óc con người trên cơ sở thực tiễn)."
+            },
+            {
+                id: 4,
+                question: "Câu 4: Theo triết học Mác - Lênin, quá trình nhận thức có hai giai đoạn cơ bản nào?",
+                options: [
+                    { key: "A", text: "Cảm giác và tri giác." },
+                    { key: "B", text: "Khái niệm và phán đoán." },
+                    { key: "C", text: "Quan sát trực tiếp và suy luận gián tiếp." },
+                    { key: "D", text: "Nhận thức cảm tính và nhận thức lý tính." }
+                ],
+                correct: "D",
+                explanation: "Đáp án đúng: D (Quá trình nhận thức có hai giai đoạn cơ bản là nhận thức cảm tính và nhận thức lý tính)."
+            },
+            {
+                id: 5,
+                question: "Câu 5: Nhận thức cảm tính (giai đoạn đầu tiên của quá trình nhận thức) bao gồm ba hình thức cơ bản nào?",
+                options: [
+                    { key: "A", text: "Cảm giác, tri giác, biểu tượng." },
+                    { key: "B", text: "Khái niệm, phán đoán, suy luận." },
+                    { key: "C", text: "Cảm giác, khái niệm, suy luận." },
+                    { key: "D", text: "Tri giác, biểu tượng, phán đoán." }
+                ],
+                correct: "A",
+                explanation: "Đáp án đúng: A (Nhận thức cảm tính gồm ba hình thức là Cảm giác, Tri giác và Biểu tượng)."
+            }
+        ];
+
+        const DEFAULT_ROSTER = [
+            "Nguyễn Minh Tuấn", "Trần Thị Thảo Vy", "Lê Hoàng Bách", "Phạm Ngọc Ánh",
+            "Hoàng Gia Bảo", "Vũ Thị Mai Phương", "Đặng Quốc Khánh", "Bùi Thanh Hà",
+            "Đỗ Đức Mạnh", "Ngô Thùy Linh", "Dương Tuấn Kiệt", "Lý Hồng Nhung",
+            "Trương Quang Huy", "Phan Thanh Trúc", "Võ Minh Khôi", "Đinh Ngọc Hân",
+            "Hồ Anh Dũng", "Lương Khánh Huyền", "Tạ Quốc Việt", "Chu Phương Thảo"
+        ];
+
+        /********************************************************************
+         * 2. AUDIO SYNTHESIZER
+         ********************************************************************/
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function ensureAudio() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass) audioCtx = new AudioContextClass();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('icon-sound').textContent = soundEnabled ? '🔊' : '🔇';
+        }
+
+        function playRadarBlip(pitchMultiplier = 1) {
+            if (!soundEnabled) return;
+            ensureAudio();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.frequency.setValueAtTime(520 * pitchMultiplier, now);
+            osc.frequency.exponentialRampToValueAtTime(880 * pitchMultiplier, now + 0.08);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.09);
+        }
+
+        function playTractorBeamSound() {
+            if (!soundEnabled) return;
+            ensureAudio();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.linearRampToValueAtTime(450, now + 1.8);
+            gain.gain.setValueAtTime(0.01, now);
+            gain.gain.linearRampToValueAtTime(0.14, now + 0.2);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 1.9);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 1.9);
+        }
+
+        function playAnswerSound(isCorrect) {
+            if (!soundEnabled) return;
+            ensureAudio();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            if (isCorrect) {
+                [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+                    gain.gain.setValueAtTime(0.12, now + idx * 0.06);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.25);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + idx * 0.06);
+                    osc.stop(now + idx * 0.06 + 0.25);
+                });
+            } else {
+                [280, 200].forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.15);
+                    gain.gain.setValueAtTime(0.12, now + idx * 0.15);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.15 + 0.25);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + idx * 0.15);
+                    osc.stop(now + idx * 0.15 + 0.25);
+                });
+            }
+        }
+
+        /********************************************************************
+         * 3. GAME STATE
+         ********************************************************************/
+        let fullClassList = [...DEFAULT_ROSTER];
+        let currentQuestionIndex = 0;
+        let gameHistory = [];
+        let gameState = 'IDLE';
+        let selectedStudentObj = null;
+        let revealCountdownTimer = null;
+        let revealSecondsLeft = 3;
+
+        /********************************************************************
+         * 4. OPTIMIZED THREE.JS SCENE (LOW-POLY SHADERS, SHARED GEOMETRIES)
+         ********************************************************************/
+        let scene, camera, renderer, clock;
+        let ufoGroup, ufoDome, ufoLightRing, alienPilotGroup;
+        let tractorBeamMesh, innerBeamMesh, beamRingsGroup, beamParticles;
+        let studentCharacters = [];
+        let starsSystem, floatingRocks = [], ringedPlanetGroup;
+
+        let camRadius = 35;
+        let camTheta = 0.35;
+        let camPhi = 1.0;
+        let camTarget = new THREE.Vector3(0, 2, 0);
+        let desiredCamTarget = new THREE.Vector3(0, 2, 0);
+        let isDragging = false;
+        let prevPointer = { x: 0, y: 0 };
+
+        let ufoPos = new THREE.Vector3(0, 14, 0);
+        let ufoTargetPos = new THREE.Vector3(0, 14, 0);
+        let scanStepCount = 0;
+        let scanTimer = 0;
+        let beamProgress = 0;
+
+        const SUIT_COLORS = [
+            0x38bdf8, 0xf43f5e, 0x10b981, 0xf59e0b, 0xa855f7,
+            0xec4899, 0x06b6d4, 0x84cc16, 0xf97316, 0x6366f1, 0x14b8a6, 0xeab308
+        ];
+
+        // Shared geometries & materials to optimize memory & GPU rendering speed
+        let sharedGeos = {};
+        let sharedMats = {};
+
+        function initThreeScene() {
+            const container = document.getElementById('canvas-container');
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x060b1e, 0.007);
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 300);
+
+            renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Optimized pixel ratio for max FPS
+            renderer.shadowMap.enabled = false; // Disabled heavy shadow maps to guarantee 60 FPS silky smooth performance
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            container.appendChild(renderer.domElement);
+
+            clock = new THREE.Clock();
+
+            // Setup shared assets for fast character generation
+            sharedGeos.limb = new THREE.CylinderGeometry(0.14, 0.13, 0.42, 8);
+            sharedGeos.boot = new THREE.SphereGeometry(0.18, 10, 8);
+            sharedGeos.torso = new THREE.CylinderGeometry(0.38, 0.42, 0.72, 12);
+            sharedGeos.glove = new THREE.SphereGeometry(0.14, 8, 8);
+            sharedGeos.helmet = new THREE.SphereGeometry(0.52, 16, 14);
+            sharedGeos.visor = new THREE.SphereGeometry(0.42, 14, 12);
+            sharedGeos.ring = new THREE.RingGeometry(0.58, 0.82, 20);
+            sharedGeos.ring.rotateX(-Math.PI / 2);
+
+            sharedMats.boot = new THREE.MeshLambertMaterial({ color: 0x1e293b });
+            sharedMats.whiteTrim = new THREE.MeshLambertMaterial({ color: 0xf8fafc });
+            sharedMats.gold = new THREE.MeshLambertMaterial({ color: 0xfbbf24 });
+            sharedMats.visor = new THREE.MeshLambertMaterial({ color: 0x090d16 });
+            sharedMats.eye = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+            sharedMats.cheek = new THREE.MeshBasicMaterial({ color: 0xf472b6 });
+
+            // Lighting
+            const hemiLight = new THREE.HemisphereLight(0x7dd3fc, 0x0f172a, 0.95);
+            scene.add(hemiLight);
+
+            const dirLight = new THREE.DirectionalLight(0xfef08a, 1.1);
+            dirLight.position.set(20, 40, 20);
+            scene.add(dirLight);
+
+            createStarfieldAndPlanets();
+            createEnvironmentIsland();
+            createSpaceshipUFO();
+            setupOrbitEvents();
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function createStarfieldAndPlanets() {
+            const starGeo = new THREE.BufferGeometry();
+            const count = 1000;
+            const positions = new Float32Array(count * 3);
+            for (let i = 0; i < count; i++) {
+                const r = 80 + Math.random() * 100;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+                positions[i * 3 + 1] = Math.abs(r * Math.cos(phi)) - 15;
+                positions[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+            }
+            starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            starsSystem = new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.7, color: 0x38bdf8 }));
+            scene.add(starsSystem);
+
+            // Ringed Planet
+            ringedPlanetGroup = new THREE.Group();
+            const planet = new THREE.Mesh(
+                new THREE.SphereGeometry(12, 16, 16),
+                new THREE.MeshLambertMaterial({ color: 0x4f46e5 })
+            );
+            ringedPlanetGroup.add(planet);
+
+            const pRing = new THREE.Mesh(
+                new THREE.RingGeometry(16, 23, 32).rotateX(Math.PI / 2.2),
+                new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.4 })
+            );
+            ringedPlanetGroup.add(pRing);
+            ringedPlanetGroup.position.set(-55, 32, -75);
+            scene.add(ringedPlanetGroup);
+        }
+
+        function createEnvironmentIsland() {
+            const islandGroup = new THREE.Group();
+
+            // Island Top Deck
+            const topMesh = new THREE.Mesh(
+                new THREE.CylinderGeometry(22, 21, 1.2, 32),
+                new THREE.MeshLambertMaterial({ color: 0x0f3d3e })
+            );
+            topMesh.position.y = -0.6;
+            islandGroup.add(topMesh);
+
+            // Cyber Edge Trim
+            const trimMesh = new THREE.Mesh(
+                new THREE.TorusGeometry(22.1, 0.15, 8, 48).rotateX(Math.PI / 2),
+                new THREE.MeshBasicMaterial({ color: 0x22d3ee })
+            );
+            trimMesh.position.y = -0.05;
+            islandGroup.add(trimMesh);
+
+            // Center Pad
+            const centerPad = new THREE.Mesh(
+                new THREE.CylinderGeometry(4, 4.2, 0.1, 24),
+                new THREE.MeshLambertMaterial({ color: 0x0f172a })
+            );
+            centerPad.position.y = 0.04;
+            islandGroup.add(centerPad);
+
+            for (let r of [4.2, 9, 14, 19]) {
+                const ringMesh = new THREE.Mesh(
+                    new THREE.RingGeometry(r - 0.12, r, 32).rotateX(-Math.PI / 2),
+                    new THREE.MeshBasicMaterial({ color: r === 4.2 ? 0x34d399 : 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.35 })
+                );
+                ringMesh.position.y = 0.06;
+                islandGroup.add(ringMesh);
+            }
+
+            // Cliff Rock
+            const rockMesh = new THREE.Mesh(
+                new THREE.ConeGeometry(20, 14, 12),
+                new THREE.MeshLambertMaterial({ color: 0x0f172a, flatShading: true })
+            );
+            rockMesh.position.y = -10;
+            islandGroup.add(rockMesh);
+
+            // Perimeter Trees & Crystals
+            for (let i = 0; i < 14; i++) {
+                const angle = (i / 14) * Math.PI * 2;
+                const x = Math.cos(angle) * 18.5;
+                const z = Math.sin(angle) * 18.5;
+
+                if (i % 2 === 0) {
+                    const tree = new THREE.Group();
+                    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.3, 1.2, 6), new THREE.MeshLambertMaterial({ color: 0x78350f }));
+                    trunk.position.y = 0.6;
+                    tree.add(trunk);
+                    const leaves = new THREE.Mesh(new THREE.ConeGeometry(1.2, 2.2, 6), new THREE.MeshLambertMaterial({ color: 0x10b981, flatShading: true }));
+                    leaves.position.y = 1.9;
+                    tree.add(leaves);
+                    tree.position.set(x, 0, z);
+                    islandGroup.add(tree);
+                } else {
+                    const cry = new THREE.Mesh(new THREE.OctahedronGeometry(0.6, 0), new THREE.MeshLambertMaterial({ color: 0x22d3ee }));
+                    cry.position.set(x, 0.8, z);
+                    islandGroup.add(cry);
+                }
+            }
+
+            // Orbiting Floating Rocks
+            floatingRocks = [];
+            for (let i = 0; i < 6; i++) {
+                const ang = (i / 6) * Math.PI * 2;
+                const radius = 26 + (i % 2) * 4;
+                const rock = new THREE.Mesh(
+                    new THREE.DodecahedronGeometry(1.2, 0),
+                    new THREE.MeshLambertMaterial({ color: 0x1e293b, flatShading: true })
+                );
+                rock.position.set(Math.cos(ang) * radius, (i % 3) * 2 - 1, Math.sin(ang) * radius);
+                rock.userData = { angle: ang, radius: radius, speed: 0.05 + (i * 0.02), baseY: rock.position.y };
+                floatingRocks.push(rock);
+                scene.add(rock);
+            }
+
+            scene.add(islandGroup);
+        }
+
+        function createSpaceshipUFO() {
+            ufoGroup = new THREE.Group();
+            const hullMat = new THREE.MeshLambertMaterial({ color: 0xe2e8f0 });
+            const darkMat = new THREE.MeshLambertMaterial({ color: 0x334155 });
+
+            const mainDisk = new THREE.Mesh(new THREE.CylinderGeometry(2, 4.4, 0.8, 32), hullMat);
+            ufoGroup.add(mainDisk);
+
+            const underBowl = new THREE.Mesh(new THREE.CylinderGeometry(4.1, 1.6, 0.7, 32), darkMat);
+            underBowl.position.y = -0.75;
+            ufoGroup.add(underBowl);
+
+            // Alien Pilot
+            alienPilotGroup = new THREE.Group();
+            const alienHead = new THREE.Mesh(
+                new THREE.SphereGeometry(0.55, 12, 12),
+                new THREE.MeshLambertMaterial({ color: 0x4ade80 })
+            );
+            alienHead.position.y = 0.8;
+            alienPilotGroup.add(alienHead);
+            ufoGroup.add(alienPilotGroup);
+
+            // Cockpit Dome
+            ufoDome = new THREE.Mesh(
+                new THREE.SphereGeometry(2.1, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2),
+                new THREE.MeshLambertMaterial({ color: 0x7dd3fc, transparent: true, opacity: 0.45 })
+            );
+            ufoDome.position.y = 0.35;
+            ufoGroup.add(ufoDome);
+
+            // Light Ring
+            ufoLightRing = new THREE.Group();
+            for (let i = 0; i < 12; i++) {
+                const ang = (i / 12) * Math.PI * 2;
+                const orb = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.22, 8, 8),
+                    new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0x34d399 : 0x38bdf8 })
+                );
+                orb.position.set(Math.cos(ang) * 4.3, -0.3, Math.sin(ang) * 4.3);
+                ufoLightRing.add(orb);
+            }
+            ufoGroup.add(ufoLightRing);
+
+            // Tractor Beam Cone
+            const beamGeo = new THREE.ConeGeometry(3.4, 14, 24, 1, true);
+            beamGeo.translate(0, -7, 0);
+            tractorBeamMesh = new THREE.Mesh(
+                beamGeo,
+                new THREE.MeshBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.0, side: THREE.DoubleSide, depthWrite: false })
+            );
+            tractorBeamMesh.position.y = -0.9;
+            ufoGroup.add(tractorBeamMesh);
+
+            // Beam Particles
+            const partCount = 40;
+            const partGeo = new THREE.BufferGeometry();
+            const partPos = new Float32Array(partCount * 3);
+            for (let i = 0; i < partCount; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const rad = Math.random() * 2.2;
+                partPos[i * 3] = Math.cos(angle) * rad;
+                partPos[i * 3 + 1] = -Math.random() * 13;
+                partPos[i * 3 + 2] = Math.sin(angle) * rad;
+            }
+            partGeo.setAttribute('position', new THREE.BufferAttribute(partPos, 3));
+            beamParticles = new THREE.Points(
+                partGeo,
+                new THREE.PointsMaterial({ color: 0xa7f3d0, size: 0.28, transparent: true, opacity: 0.85 })
+            );
+            beamParticles.visible = false;
+            ufoGroup.add(beamParticles);
+
+            ufoGroup.position.copy(ufoPos);
+            scene.add(ufoGroup);
+        }
+
+        /********************************************************************
+         * 5. OPTIMIZED CHIBI ASTRONAUT CHARACTER GENERATOR
+         ********************************************************************/
+        function createCharacterMesh(colorHex, index = 0) {
+            const group = new THREE.Group();
+            const suitMat = new THREE.MeshLambertMaterial({ color: colorHex });
+
+            // Legs
+            const leftLegPivot = new THREE.Group();
+            leftLegPivot.position.set(-0.22, 0.52, 0);
+            const legCyl = new THREE.Mesh(sharedGeos.limb, suitMat);
+            legCyl.position.y = -0.18;
+            leftLegPivot.add(legCyl);
+            const boot = new THREE.Mesh(sharedGeos.boot, sharedMats.boot);
+            boot.scale.set(1, 0.65, 1.3);
+            boot.position.set(0, -0.38, 0.05);
+            leftLegPivot.add(boot);
+            group.add(leftLegPivot);
+
+            const rightLegPivot = leftLegPivot.clone();
+            rightLegPivot.position.x = 0.22;
+            group.add(rightLegPivot);
+
+            // Torso & Backpack
+            const torsoGroup = new THREE.Group();
+            const belly = new THREE.Mesh(sharedGeos.torso, suitMat);
+            belly.position.y = 0.88;
+            torsoGroup.add(belly);
+
+            const belt = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.05, 6, 16).rotateX(Math.PI / 2), sharedMats.boot);
+            belt.position.y = 0.64;
+            torsoGroup.add(belt);
+
+            const jetpack = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.6, 0.3), sharedMats.whiteTrim);
+            jetpack.position.set(0, 0.92, -0.4);
+            torsoGroup.add(jetpack);
+            group.add(torsoGroup);
+
+            // Arms
+            const leftArmPivot = new THREE.Group();
+            leftArmPivot.position.set(-0.46, 1.15, 0);
+            const armCyl = new THREE.Mesh(sharedGeos.limb, suitMat);
+            armCyl.position.y = -0.18;
+            leftArmPivot.add(armCyl);
+            const glove = new THREE.Mesh(sharedGeos.glove, sharedMats.whiteTrim);
+            glove.position.y = -0.38;
+            leftArmPivot.add(glove);
+            leftArmPivot.rotation.z = 0.25;
+            group.add(leftArmPivot);
+
+            const rightArmPivot = leftArmPivot.clone();
+            rightArmPivot.position.x = 0.46;
+            rightArmPivot.rotation.z = -0.25;
+            group.add(rightArmPivot);
+
+            // Head & Helmet
+            const headGroup = new THREE.Group();
+            headGroup.position.y = 1.75;
+
+            const helmet = new THREE.Mesh(sharedGeos.helmet, sharedMats.whiteTrim);
+            headGroup.add(helmet);
+
+            const visor = new THREE.Mesh(sharedGeos.visor, sharedMats.visor);
+            visor.scale.set(1.02, 0.7, 0.55);
+            visor.position.set(0, 0, 0.32);
+            headGroup.add(visor);
+
+            const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.06, 6, 6), sharedMats.eye);
+            leftEye.position.set(-0.14, 0.04, 0.54);
+            headGroup.add(leftEye);
+
+            const rightEye = leftEye.clone();
+            rightEye.position.x = 0.14;
+            headGroup.add(rightEye);
+
+            const cheek = new THREE.Mesh(new THREE.SphereGeometry(0.04, 6, 6), sharedMats.cheek);
+            cheek.position.set(-0.22, -0.04, 0.52);
+            headGroup.add(cheek);
+            const cheekR = cheek.clone();
+            cheekR.position.x = 0.22;
+            headGroup.add(cheekR);
+
+            // Accessory on head
+            const accType = index % 4;
+            if (accType === 0) {
+                const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), sharedMats.eye);
+                bulb.position.y = 0.65;
+                headGroup.add(bulb);
+            } else if (accType === 1) {
+                const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.15, 0.2, 4), sharedMats.gold);
+                crown.position.y = 0.58;
+                headGroup.add(crown);
+            } else if (accType === 2) {
+                const sprout = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), new THREE.MeshLambertMaterial({ color: 0x4ade80 }));
+                sprout.scale.set(1.2, 0.4, 0.8);
+                sprout.position.set(0, 0.65, 0);
+                headGroup.add(sprout);
+            } else {
+                const halo = new THREE.Mesh(new THREE.TorusGeometry(0.25, 0.03, 6, 16).rotateX(Math.PI / 2), sharedMats.gold);
+                halo.position.y = 0.7;
+                headGroup.add(halo);
+            }
+
+            group.add(headGroup);
+
+            // Foot Ring
+            const footRing = new THREE.Mesh(sharedGeos.ring, new THREE.MeshBasicMaterial({ color: 0x34d399, side: THREE.DoubleSide, transparent: true, opacity: 0.0 }));
+            footRing.position.y = 0.04;
+            group.add(footRing);
+
+            group.userData = {
+                leftArm: leftArmPivot, rightArm: rightArmPivot,
+                leftLeg: leftLegPivot, rightLeg: rightLegPivot,
+                headGroup: headGroup, footRing: footRing
+            };
+
+            return group;
+        }
+
+        /********************************************************************
+         * 6. SPAWN & SYNC CHARACTERS
+         ********************************************************************/
+        function spawnClassCharacters(namesList) {
+            studentCharacters.forEach(st => {
+                scene.remove(st.mesh);
+                if (st.labelEl && st.labelEl.parentNode) st.labelEl.parentNode.removeChild(st.labelEl);
+            });
+            studentCharacters = [];
+
+            const labelsContainer = document.getElementById('labels-container');
+            labelsContainer.innerHTML = '';
+
+            const total = namesList.length;
+            namesList.forEach((fullName, idx) => {
+                const goldenAngle = idx * 2.3999;
+                const radius = total === 1 ? 0 : Math.min(16.5, 2.5 * Math.sqrt(idx + 1));
+                const x = Math.cos(goldenAngle) * radius;
+                const z = Math.sin(goldenAngle) * radius;
+
+                const color = SUIT_COLORS[idx % SUIT_COLORS.length];
+                const mesh = createCharacterMesh(color, idx);
+                mesh.position.set(x, 0, z);
+                mesh.rotation.y = Math.random() * Math.PI * 2;
+                scene.add(mesh);
+
+                const labelEl = document.createElement('div');
+                labelEl.className = 'student-label';
+                labelEl.textContent = fullName;
+                labelsContainer.appendChild(labelEl);
+
+                studentCharacters.push({
+                    id: idx,
+                    name: fullName,
+                    mesh: mesh,
+                    labelEl: labelEl,
+                    abducted: false,
+                    basePos: new THREE.Vector3(x, 0, z),
+                    wanderAngle: Math.random() * Math.PI * 2,
+                    wanderSpeed: 0.6 + Math.random() * 0.4,
+                    bobOffset: Math.random() * Math.PI * 2
+                });
+            });
+
+            updateHUDCounters();
+        }
+
+        function updateHUDCounters() {
+            const activeStudents = studentCharacters.filter(s => !s.abducted);
+            document.getElementById('hud-remaining-count').textContent = activeStudents.length;
+            document.getElementById('hud-question-progress').textContent = `${currentQuestionIndex} / ${QUESTIONS.length}`;
+
+            const dotsContainer = document.getElementById('progress-dots');
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < QUESTIONS.length; i++) {
+                const record = gameHistory.find(h => h.questionIndex === i);
+                const dot = document.createElement('div');
+                dot.className = 'flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ';
+                if (record) {
+                    dot.className += record.isCorrect ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-400/40' : 'bg-rose-500/25 text-rose-300 border border-rose-400/40';
+                    dot.innerHTML = `<i class="text-[9px]" style="font-style:normal">${record.isCorrect ? '✔' : '✕'}</i> <span>C${i + 1}</span>`;
+                } else if (i === currentQuestionIndex) {
+                    dot.className += 'bg-cyan-500/30 text-white border border-cyan-300 shadow-sm';
+                    dot.innerHTML = `<span>C${i + 1}</span>`;
+                } else {
+                    dot.className += 'bg-slate-800/70 text-slate-400 border border-slate-700';
+                    dot.innerHTML = `<span>C${i + 1}</span>`;
+                }
+                dotsContainer.appendChild(dot);
+            }
+
+            const btnText = document.getElementById('btn-abduct-text');
+            const btnTrigger = document.getElementById('btn-abduct-trigger');
+            if (currentQuestionIndex < QUESTIONS.length) {
+                btnText.textContent = `UFO BẮT NGƯỜI (CÂU ${currentQuestionIndex + 1}/${QUESTIONS.length})`;
+                btnTrigger.disabled = (gameState !== 'IDLE');
+            }
+        }
+
+        /********************************************************************
+         * 7. UFO ABDUCTION & QUIZ LOGIC
+         ********************************************************************/
+        function startRandomAbduction() {
+            if (gameState !== 'IDLE') return;
+            ensureAudio();
+
+            let available = studentCharacters.filter(s => !s.abducted);
+            if (available.length === 0) {
+                studentCharacters.forEach(s => {
+                    s.abducted = false;
+                    s.mesh.visible = true;
+                    s.mesh.scale.set(1, 1, 1);
+                    s.mesh.position.set(s.basePos.x, 0, s.basePos.z);
+                    s.labelEl.style.display = 'block';
+                    s.labelEl.className = 'student-label';
+                });
+                available = studentCharacters.filter(s => !s.abducted);
+                updateHUDCounters();
+            }
+
+            gameState = 'SCANNING';
+            document.getElementById('btn-abduct-trigger').disabled = true;
+            document.getElementById('btn-abduct-text').textContent = 'ĐANG DÒ TÌM MỤC TIÊU...';
+
+            scanStepCount = Math.min(available.length > 1 ? 8 : 1, 10);
+            scanTimer = 0;
+            pickNextScanCandidate(available);
+        }
+
+        function pickNextScanCandidate(available) {
+            studentCharacters.forEach(s => {
+                if (!s.abducted) {
+                    s.labelEl.className = 'student-label';
+                    s.mesh.userData.footRing.material.opacity = 0;
+                }
+            });
+
+            const randomIndex = Math.floor(Math.random() * available.length);
+            selectedStudentObj = available[randomIndex];
+
+            ufoTargetPos.set(selectedStudentObj.mesh.position.x, 13, selectedStudentObj.mesh.position.z);
+            selectedStudentObj.labelEl.className = 'student-label scanning';
+            selectedStudentObj.mesh.userData.footRing.material.color.setHex(0xfbbf24);
+            selectedStudentObj.mesh.userData.footRing.material.opacity = 0.8;
+
+            desiredCamTarget.set(selectedStudentObj.mesh.position.x * 0.4, 3.5, selectedStudentObj.mesh.position.z * 0.4);
+            playRadarBlip(1 + (8 - scanStepCount) * 0.05);
+        }
+
+        function lockTargetAndFireBeam() {
+            gameState = 'BEAMING';
+            beamProgress = 0;
+
+            document.getElementById('btn-abduct-text').textContent = `ĐANG HÚT: ${selectedStudentObj.name.toUpperCase()}!`;
+            selectedStudentObj.labelEl.className = 'student-label abducted';
+            selectedStudentObj.mesh.userData.footRing.material.color.setHex(0x10b981);
+            selectedStudentObj.mesh.userData.footRing.material.opacity = 1.0;
+
+            tractorBeamMesh.material.opacity = 0.28;
+            beamParticles.visible = true;
+
+            desiredCamTarget.set(selectedStudentObj.mesh.position.x, 5.5, selectedStudentObj.mesh.position.z);
+            playTractorBeamSound();
+        }
+
+        function completeAbductionAndShowBanner() {
+            gameState = 'REVEALED';
+            tractorBeamMesh.material.opacity = 0.0;
+            beamParticles.visible = false;
+            selectedStudentObj.abducted = true;
+            selectedStudentObj.mesh.visible = false;
+            selectedStudentObj.labelEl.style.display = 'none';
+
+            updateHUDCounters();
+
+            document.getElementById('reveal-q-num').textContent = `Câu ${currentQuestionIndex + 1}/${QUESTIONS.length}`;
+            document.getElementById('reveal-student-name').textContent = selectedStudentObj.name;
+
+            const revealModal = document.getElementById('abducted-reveal-modal');
+            revealModal.classList.remove('hidden');
+            revealModal.classList.add('flex');
+
+            const autoAdvance = document.getElementById('chk-auto-question').checked;
+            const countdownText = document.getElementById('reveal-countdown-text');
+
+            if (revealCountdownTimer) clearInterval(revealCountdownTimer);
+
+            if (autoAdvance) {
+                revealSecondsLeft = 3;
+                countdownText.classList.remove('hidden');
+                document.getElementById('reveal-timer-sec').textContent = revealSecondsLeft;
+
+                revealCountdownTimer = setInterval(() => {
+                    revealSecondsLeft--;
+                    if (revealSecondsLeft <= 0) {
+                        clearInterval(revealCountdownTimer);
+                        openQuestionModalNow();
+                    } else {
+                        document.getElementById('reveal-timer-sec').textContent = revealSecondsLeft;
+                    }
+                }, 1000);
+            } else {
+                countdownText.classList.add('hidden');
+            }
+        }
+
+        function openQuestionModalNow() {
+            if (revealCountdownTimer) clearInterval(revealCountdownTimer);
+            document.getElementById('abducted-reveal-modal').classList.add('hidden');
+            document.getElementById('abducted-reveal-modal').classList.remove('flex');
+
+            gameState = 'QUIZ';
+            const qData = QUESTIONS[currentQuestionIndex];
+
+            document.getElementById('quiz-student-name').textContent = selectedStudentObj ? selectedStudentObj.name : 'Học sinh';
+            document.getElementById('quiz-badge-number').textContent = `CÂU HỎI ${currentQuestionIndex + 1} / ${QUESTIONS.length}`;
+            document.getElementById('quiz-question-text').textContent = qData.question;
+
+            document.getElementById('quiz-explanation-box').classList.add('hidden');
+            const nextBtn = document.getElementById('btn-next-round');
+            nextBtn.classList.add('hidden');
+            nextBtn.classList.remove('flex');
+
+            document.getElementById('quiz-status-hint').textContent = 'Hãy chọn 1 trong 4 đáp án A, B, C hoặc D';
+
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.innerHTML = '';
+
+            qData.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-card w-full text-left p-3.5 rounded-2xl bg-slate-900/85 border border-slate-700 flex items-start gap-3 group';
+                btn.dataset.key = opt.key;
+                btn.onclick = () => selectQuizAnswer(opt.key);
+                btn.innerHTML = `
+                    <div class="opt-badge w-8 h-8 rounded-xl bg-slate-800 border border-slate-600 text-cyan-300 font-black text-xs flex items-center justify-center shrink-0 group-hover:bg-cyan-500 group-hover:text-slate-950 transition">
+                        ${opt.key}
+                    </div>
+                    <div class="text-xs sm:text-sm font-semibold text-slate-100 leading-relaxed pt-1">
+                        ${opt.text}
+                    </div>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('question-modal').classList.remove('hidden');
+            document.getElementById('question-modal').classList.add('flex');
+        }
+
+        function selectQuizAnswer(chosenKey) {
+            const qData = QUESTIONS[currentQuestionIndex];
+            const isCorrect = (chosenKey === qData.correct);
+            playAnswerSound(isCorrect);
+
+            document.querySelectorAll('#quiz-options-container .option-card').forEach(btn => {
+                btn.classList.add('locked');
+                btn.onclick = null;
+                const key = btn.dataset.key;
+                const badge = btn.querySelector('.opt-badge');
+
+                if (key === qData.correct) {
+                    btn.className = 'option-card locked w-full text-left p-3.5 rounded-2xl bg-emerald-950/80 border-2 border-emerald-400 flex items-start gap-3 shadow-md';
+                    badge.className = 'opt-badge w-8 h-8 rounded-xl bg-emerald-400 text-slate-950 font-black text-xs flex items-center justify-center shrink-0';
+                } else if (key === chosenKey && !isCorrect) {
+                    btn.className = 'option-card locked w-full text-left p-3.5 rounded-2xl bg-rose-950/80 border-2 border-rose-400 flex items-start gap-3';
+                    badge.className = 'opt-badge w-8 h-8 rounded-xl bg-rose-400 text-slate-950 font-black text-xs flex items-center justify-center shrink-0';
+                } else {
+                    btn.classList.add('opacity-50');
+                }
+            });
+
+            const expBox = document.getElementById('quiz-explanation-box');
+            expBox.classList.remove('hidden');
+            expBox.className = isCorrect ? 'rounded-2xl p-4 mb-4 border bg-emerald-950/60 border-emerald-400/60' : 'rounded-2xl p-4 mb-4 border bg-rose-950/60 border-rose-400/60';
+            document.getElementById('quiz-feedback-icon').innerHTML = `<i style="font-style:normal">${isCorrect ? '✅' : '❌'}</i>`;
+            document.getElementById('quiz-feedback-title').textContent = isCorrect ? `Chính xác! Chúc mừng ${selectedStudentObj.name}!` : `Chưa đúng! Đáp án đúng là ${qData.correct}.`;
+            document.getElementById('quiz-feedback-title').className = `font-extrabold text-sm mb-1 ${isCorrect ? 'text-emerald-300' : 'text-rose-300'}`;
+            document.getElementById('quiz-explanation-text').textContent = qData.explanation;
+
+            gameHistory.push({
+                questionIndex: currentQuestionIndex,
+                questionTitle: qData.question,
+                studentName: selectedStudentObj ? selectedStudentObj.name : 'Học sinh',
+                selectedOption: chosenKey,
+                correctOption: qData.correct,
+                isCorrect: isCorrect
+            });
+
+            const nextBtn = document.getElementById('btn-next-round');
+            nextBtn.classList.remove('hidden');
+            nextBtn.classList.add('flex');
+            document.getElementById('btn-next-round-text').textContent = currentQuestionIndex + 1 < QUESTIONS.length ? 'TIẾP TỤC CÂU TIẾP THEO' : 'XEM TỔNG KẾT';
+        }
+
+        function finishCurrentQuestion() {
+            document.getElementById('question-modal').classList.add('hidden');
+            document.getElementById('question-modal').classList.remove('flex');
+
+            currentQuestionIndex++;
+            updateHUDCounters();
+            desiredCamTarget.set(0, 2, 0);
+            ufoTargetPos.set(0, 13.5, 0);
+
+            if (currentQuestionIndex >= QUESTIONS.length) {
+                showFinalSummaryModal();
+            } else {
+                gameState = 'IDLE';
+                updateHUDCounters();
+                setTimeout(() => {
+                    if (gameState === 'IDLE') startRandomAbduction();
+                }, 500);
+            }
+        }
+
+        function showFinalSummaryModal() {
+            gameState = 'SUMMARY';
+            const correctCount = gameHistory.filter(h => h.isCorrect).length;
+            const accuracy = Math.round((correctCount / QUESTIONS.length) * 100);
+
+            document.getElementById('summary-correct-count').textContent = `${correctCount} / ${QUESTIONS.length}`;
+            document.getElementById('summary-accuracy').textContent = `${accuracy}%`;
+
+            const listEl = document.getElementById('summary-history-list');
+            listEl.innerHTML = '';
+            gameHistory.forEach((item, idx) => {
+                const row = document.createElement('div');
+                row.className = 'p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 flex items-center justify-between gap-2 text-xs';
+                row.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 font-black flex items-center justify-center">C${idx + 1}</span>
+                        <div><strong class="text-white">${item.studentName}</strong><span class="text-slate-400 block text-[10px]">${item.questionTitle}</span></div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded font-bold ${item.isCorrect ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'}">${item.isCorrect ? 'Đúng' : 'Sai'}</span>
+                `;
+                listEl.appendChild(row);
+            });
+
+            document.getElementById('summary-modal').classList.remove('hidden');
+            document.getElementById('summary-modal').classList.add('flex');
+        }
+
+        function playAgainKeepRemaining() {
+            document.getElementById('summary-modal').classList.add('hidden');
+            document.getElementById('summary-modal').classList.remove('flex');
+            currentQuestionIndex = 0;
+            gameHistory = [];
+            gameState = 'IDLE';
+            if (studentCharacters.filter(s => !s.abducted).length < QUESTIONS.length) {
+                spawnClassCharacters(fullClassList);
+            } else {
+                updateHUDCounters();
+            }
+        }
+
+        function openRosterModalFromSummary() {
+            document.getElementById('summary-modal').classList.add('hidden');
+            document.getElementById('summary-modal').classList.remove('flex');
+            openRosterModal();
+        }
+
+        function openRosterModal() {
+            const textarea = document.getElementById('roster-textarea');
+            if (!textarea.value.trim()) textarea.value = fullClassList.join('\n');
+            updateRosterCounter();
+            document.getElementById('roster-modal').classList.remove('hidden');
+            document.getElementById('roster-modal').classList.add('flex');
+        }
+
+        function closeRosterModal() {
+            document.getElementById('roster-modal').classList.add('hidden');
+            document.getElementById('roster-modal').classList.remove('flex');
+        }
+
+        function parseRosterLines(rawText) {
+            return rawText.split(/\r?\n|,|;/).map(s => s.replace(/^\d+[\.\)\-\s]+/, '').trim()).filter(s => s.length > 0);
+        }
+
+        function updateRosterCounter() {
+            const raw = document.getElementById('roster-textarea').value;
+            document.getElementById('roster-line-counter').textContent = `${parseRosterLines(raw).length} học sinh`;
+        }
+
+        function loadSampleRoster() {
+            document.getElementById('roster-textarea').value = DEFAULT_ROSTER.join('\n');
+            updateRosterCounter();
+        }
+
+        function clearRosterInput() {
+            document.getElementById('roster-textarea').value = '';
+            updateRosterCounter();
+        }
+
+        function applyRosterAndSpawn(resetGameProgress = true) {
+            const raw = document.getElementById('roster-textarea').value;
+            let parsed = parseRosterLines(raw);
+            if (parsed.length === 0) parsed = [...DEFAULT_ROSTER];
+            fullClassList = parsed;
+            if (resetGameProgress) {
+                currentQuestionIndex = 0;
+                gameHistory = [];
+                gameState = 'IDLE';
+            }
+            spawnClassCharacters(fullClassList);
+            closeRosterModal();
+        }
+
+        /********************************************************************
+         * 8. ORBIT & ANIMATION LOOP
+         ********************************************************************/
+        function setupOrbitEvents() {
+            const dom = renderer.domElement;
+            dom.addEventListener('mousedown', e => { isDragging = true; prevPointer.x = e.clientX; prevPointer.y = e.clientY; });
+            window.addEventListener('mousemove', e => {
+                if (!isDragging) return;
+                const dx = e.clientX - prevPointer.x;
+                const dy = e.clientY - prevPointer.y;
+                prevPointer.x = e.clientX; prevPointer.y = e.clientY;
+                camTheta -= dx * 0.006;
+                camPhi = Math.max(0.3, Math.min(1.4, camPhi - dy * 0.005));
+            });
+            window.addEventListener('mouseup', () => { isDragging = false; });
+            dom.addEventListener('wheel', e => { e.preventDefault(); camRadius = Math.max(15, Math.min(60, camRadius + e.deltaY * 0.02)); }, { passive: false });
+
+            dom.addEventListener('touchstart', e => {
+                if (e.touches.length === 1) { isDragging = true; prevPointer.x = e.touches[0].clientX; prevPointer.y = e.touches[0].clientY; }
+            }, { passive: true });
+            window.addEventListener('touchmove', e => {
+                if (!isDragging || e.touches.length !== 1) return;
+                const dx = e.touches[0].clientX - prevPointer.x;
+                const dy = e.touches[0].clientY - prevPointer.y;
+                prevPointer.x = e.touches[0].clientX; prevPointer.y = e.touches[0].clientY;
+                camTheta -= dx * 0.006;
+                camPhi = Math.max(0.3, Math.min(1.4, camPhi - dy * 0.005));
+            }, { passive: true });
+            window.addEventListener('touchend', () => { isDragging = false; });
+        }
+
+        function resetCameraView() {
+            camRadius = 35; camTheta = 0.35; camPhi = 1.0;
+            desiredCamTarget.set(0, 2, 0);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function update2DLabels() {
+            const halfW = window.innerWidth / 2;
+            const halfH = window.innerHeight / 2;
+            const tempVec = new THREE.Vector3();
+
+            studentCharacters.forEach(st => {
+                if (st.abducted || !st.mesh.visible) {
+                    st.labelEl.style.display = 'none';
+                    return;
+                }
+                tempVec.copy(st.mesh.position);
+                tempVec.y += 2.6;
+                tempVec.project(camera);
+
+                if (tempVec.z > 1) {
+                    st.labelEl.style.display = 'none';
+                    return;
+                }
+
+                st.labelEl.style.display = 'block';
+                st.labelEl.style.left = `${(tempVec.x * halfW) + halfW}px`;
+                st.labelEl.style.top = `${-(tempVec.y * halfH) + halfH}px`;
+            });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const dt = Math.min(clock.getDelta(), 0.1);
+            const elapsed = clock.getElapsedTime();
+
+            if (ufoLightRing) ufoLightRing.rotation.y += dt * 2.5;
+            if (alienPilotGroup) alienPilotGroup.rotation.y = Math.sin(elapsed * 2) * 0.4;
+            if (starsSystem) starsSystem.rotation.y += dt * 0.01;
+            if (ringedPlanetGroup) ringedPlanetGroup.rotation.y += dt * 0.03;
+
+            floatingRocks.forEach(rock => {
+                rock.userData.angle += dt * rock.userData.speed;
+                rock.position.x = Math.cos(rock.userData.angle) * rock.userData.radius;
+                rock.position.z = Math.sin(rock.userData.angle) * rock.userData.radius;
+                rock.position.y = rock.userData.baseY + Math.sin(elapsed * 1.5 + rock.userData.angle) * 0.5;
+            });
+
+            if (gameState === 'IDLE') {
+                ufoTargetPos.set(Math.sin(elapsed * 0.4) * 8, 13.5 + Math.sin(elapsed * 1.2) * 0.5, Math.cos(elapsed * 0.3) * 6);
+                ufoPos.lerp(ufoTargetPos, dt * 3);
+                ufoGroup.position.copy(ufoPos);
+            } else if (gameState === 'SCANNING') {
+                ufoPos.lerp(ufoTargetPos, dt * 7);
+                ufoGroup.position.copy(ufoPos);
+                scanTimer += dt;
+                if (scanTimer >= 0.22) {
+                    scanTimer = 0;
+                    scanStepCount--;
+                    const available = studentCharacters.filter(s => !s.abducted);
+                    if (scanStepCount > 0) pickNextScanCandidate(available);
+                    else lockTargetAndFireBeam();
+                }
+            } else if (gameState === 'BEAMING' && selectedStudentObj) {
+                ufoTargetPos.set(selectedStudentObj.basePos.x, 13, selectedStudentObj.basePos.z);
+                ufoPos.lerp(ufoTargetPos, dt * 8);
+                ufoGroup.position.copy(ufoPos);
+
+                if (beamParticles) {
+                    beamParticles.rotation.y += dt * 3;
+                    const posAttr = beamParticles.geometry.attributes.position;
+                    for (let i = 0; i < posAttr.count; i++) {
+                        let py = posAttr.getY(i) + dt * 8;
+                        if (py > -0.5) py = -13;
+                        posAttr.setY(i, py);
+                    }
+                    posAttr.needsUpdate = true;
+                }
+
+                beamProgress += dt / 2.0;
+                const clampedP = Math.min(1, beamProgress);
+                selectedStudentObj.mesh.position.y = clampedP * clampedP * 11.5;
+                selectedStudentObj.mesh.rotation.y += dt * 7;
+
+                if (beamProgress >= 1) completeAbductionAndShowBanner();
+            } else {
+                ufoPos.lerp(ufoTargetPos, dt * 3);
+                ufoGroup.position.copy(ufoPos);
+            }
+
+            studentCharacters.forEach(st => {
+                if (st.abducted) return;
+                if (gameState === 'BEAMING' && st === selectedStudentObj) return;
+
+                const ud = st.mesh.userData;
+                st.wanderAngle += (Math.random() - 0.5) * dt * 1.5;
+                const targetX = st.basePos.x + Math.cos(st.wanderAngle) * 0.8;
+                const targetZ = st.basePos.z + Math.sin(st.wanderAngle) * 0.8;
+
+                st.mesh.position.x += (targetX - st.mesh.position.x) * dt * st.wanderSpeed;
+                st.mesh.position.z += (targetZ - st.mesh.position.z) * dt * st.wanderSpeed;
+
+                const walkPhase = elapsed * 6 + st.bobOffset;
+                st.mesh.position.y = Math.abs(Math.sin(walkPhase)) * 0.1;
+
+                if (gameState === 'SCANNING' || gameState === 'BEAMING') {
+                    st.mesh.lookAt(ufoPos.x, st.mesh.position.y, ufoPos.z);
+                    ud.leftArm.rotation.z = 2.2;
+                    ud.rightArm.rotation.z = -2.2;
+                } else {
+                    st.mesh.rotation.y = st.wanderAngle;
+                    const swing = Math.sin(walkPhase) * 0.4;
+                    if (ud.leftLeg && ud.rightLeg) {
+                        ud.leftLeg.rotation.x = swing;
+                        ud.rightLeg.rotation.x = -swing;
+                    }
+                }
+            });
+
+            camTarget.lerp(desiredCamTarget, dt * 4);
+            camera.position.x = camTarget.x + camRadius * Math.sin(camPhi) * Math.sin(camTheta);
+            camera.position.y = camTarget.y + camRadius * Math.cos(camPhi);
+            camera.position.z = camTarget.z + camRadius * Math.sin(camPhi) * Math.cos(camTheta);
+            camera.lookAt(camTarget);
+
+            renderer.render(scene, camera);
+            update2DLabels();
+        }
+
+        window.onload = function () {
+            document.getElementById('roster-textarea').value = DEFAULT_ROSTER.join('\n');
+            updateRosterCounter();
+            initThreeScene();
+            spawnClassCharacters(fullClassList);
+            animate();
+        };
+    </script>
+
+    <!-- ===== HIỆU ỨNG NÂNG CẤP ===== -->
+    <script>
+    (function(){
+      const prevOnload = window.onload;
+      window.onload = function(){ prevOnload && prevOnload(); initFX(); };
+
+      function initFX(){
+        renderer.toneMappingExposure = 1.2;
+
+        // Texture quầng sáng mềm
+        const c = document.createElement('canvas'); c.width = c.height = 64;
+        const g = c.getContext('2d'), rg = g.createRadialGradient(32,32,0,32,32,32);
+        rg.addColorStop(0,'rgba(255,255,255,1)'); rg.addColorStop(.3,'rgba(255,255,255,.45)'); rg.addColorStop(1,'rgba(255,255,255,0)');
+        g.fillStyle = rg; g.fillRect(0,0,64,64);
+        const glowTex = new THREE.CanvasTexture(c);
+        const glow = (col,s,op)=>{
+          const m = new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex,color:col,transparent:true,opacity:op,
+            blending:THREE.AdditiveBlending,depthWrite:false,fog:false}));
+          m.scale.set(s,s,1); return m;
+        };
+
+        // Tinh vân nền
+        [[-70,40,-110,0x6366f1],[80,25,-100,0x10b981],[0,60,-130,0xec4899],[-90,-5,-60,0x06b6d4],[95,50,-40,0x8b5cf6]]
+          .forEach(([x,y,z,col])=>{ const n = glow(col,120,.22); n.position.set(x,y,z); scene.add(n); });
+
+        // UFO: quầng động cơ + đèn chiếu
+        const engine = glow(0x34d399,10,.7); engine.position.y = -1.3; ufoGroup.add(engine);
+        const spot = new THREE.PointLight(0x34d399,0.4,45); spot.position.y = -2; ufoGroup.add(spot);
+        ufoLightRing.children.forEach((o,i)=>{ const h = glow(i%2?0x38bdf8:0x34d399,1.6,.8); o.add(h); });
+
+        // Vòng mục tiêu dưới đất
+        const target = new THREE.Mesh(new THREE.RingGeometry(2.6,3.2,48).rotateX(-Math.PI/2),
+          new THREE.MeshBasicMaterial({color:0x34d399,transparent:true,opacity:0,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,depthWrite:false}));
+        target.position.y = .12; scene.add(target);
+
+        // Vòng năng lượng chạy lên theo tia hút
+        const rings = [];
+        for(let i=0;i<6;i++){
+          const r = new THREE.Mesh(new THREE.TorusGeometry(1,.05,6,36).rotateX(Math.PI/2),
+            new THREE.MeshBasicMaterial({color:0xa7f3d0,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false}));
+          ufoGroup.add(r); rings.push(r);
+        }
+
+        // Hệ hạt (tia lửa, nổ)
+        const N = 400, pPos = new Float32Array(N*3).fill(-999), pCol = new Float32Array(N*3), base = new Float32Array(N*3);
+        const vel = Array.from({length:N},()=>new THREE.Vector3()), life = new Float32Array(N); let head = 0;
+        const pg = new THREE.BufferGeometry();
+        pg.setAttribute('position',new THREE.BufferAttribute(pPos,3)); pg.setAttribute('color',new THREE.BufferAttribute(pCol,3));
+        const pts = new THREE.Points(pg,new THREE.PointsMaterial({size:.7,map:glowTex,vertexColors:true,transparent:true,
+          blending:THREE.AdditiveBlending,depthWrite:false,fog:false}));
+        pts.frustumCulled = false; scene.add(pts);
+        const tc = new THREE.Color();
+        function emit(p,hex,n,sp,up){
+          tc.set(hex);
+          for(let i=0;i<n;i++){
+            const k = head++ % N;
+            pPos.set([p.x,p.y,p.z],k*3); base.set([tc.r,tc.g,tc.b],k*3);
+            vel[k].set((Math.random()-.5)*sp,Math.random()*sp*.6+up,(Math.random()-.5)*sp); life[k] = 1;
+          }
+        }
+
+        // Sao băng
+        const shooters = [];
+        function spawnShooter(){
+          const m = new THREE.Mesh(new THREE.PlaneGeometry(9,.14),new THREE.MeshBasicMaterial({color:0xbae6fd,transparent:true,
+            opacity:1,blending:THREE.AdditiveBlending,depthWrite:false,fog:false}));
+          m.position.set((Math.random()-.5)*160,40+Math.random()*40,-60-Math.random()*60);
+          shooters.push({m,v:new THREE.Vector3(-70-Math.random()*40,-25,0),t:0}); scene.add(m);
+        }
+
+        // Pháo giấy
+        const cv = document.getElementById('fx-confetti'), cx = cv.getContext('2d'); let conf = [];
+        function fit(){ cv.width = innerWidth; cv.height = innerHeight; } fit(); addEventListener('resize',fit);
+        window.fxConfetti = function(n=140){
+          const cols = ['#34d399','#38bdf8','#fbbf24','#f472b6','#a78bfa','#fb7185'];
+          for(let i=0;i<n;i++) conf.push({x:innerWidth/2,y:innerHeight*.45,vx:(Math.random()-.5)*16,vy:-Math.random()*16-4,
+            s:5+Math.random()*6,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[i%6],l:1});
+        };
+        function drawConf(dt){
+          cx.clearRect(0,0,cv.width,cv.height);
+          conf = conf.filter(p=>p.l>0);
+          conf.forEach(p=>{ p.vy += 22*dt; p.x += p.vx*60*dt; p.y += p.vy*60*dt; p.vx *= .99; p.r += p.vr; p.l -= dt*.4;
+            cx.save(); cx.globalAlpha = Math.max(0,p.l); cx.translate(p.x,p.y); cx.rotate(p.r);
+            cx.fillStyle = p.c; cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2); cx.restore(); });
+        }
+
+        // ===== ĐẸP HƠN =====
+        // Bầu trời gradient
+        { const sc=document.createElement('canvas'); sc.width=2; sc.height=256; const sg=sc.getContext('2d');
+          const gr=sg.createLinearGradient(0,0,0,256);
+          gr.addColorStop(0,'#2e1065'); gr.addColorStop(.35,'#0f1b4d'); gr.addColorStop(.5,'#0a2a3a'); gr.addColorStop(1,'#030712');
+          sg.fillStyle=gr; sg.fillRect(0,0,2,256);
+          const sky=new THREE.Mesh(new THREE.SphereGeometry(230,24,16),
+            new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(sc),side:THREE.BackSide,fog:false,depthWrite:false}));
+          sky.renderOrder=-10; scene.add(sky); }
+
+        // Tia hút: cộng sáng + lõi trong
+        tractorBeamMesh.material.blending=THREE.AdditiveBlending; tractorBeamMesh.material.color.set(0x34d399);
+        const inner=new THREE.Mesh(new THREE.ConeGeometry(1.7,14,20,1,true).translate(0,-7,0),
+          new THREE.MeshBasicMaterial({color:0xd1fae5,transparent:true,opacity:0,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,depthWrite:false}));
+        inner.position.y=-.9; ufoGroup.add(inner);
+
+        // Tinh thể phát sáng, hành tinh có khí quyển, đảo có quầng sáng
+        scene.traverse(o=>{ if(o.geometry && o.geometry.type==='OctahedronGeometry') o.add(glow(0x22d3ee,3.2,.7)); });
+        ringedPlanetGroup.add(glow(0x818cf8,60,.5));
+        const isl=glow(0x0ea5e9,75,.2); isl.position.y=-3; scene.add(isl);
+
+        // Đom đóm bay trên đảo
+        const FN=120, fb=new Float32Array(FN*3), fp=new Float32Array(FN*3), fph=[];
+        for(let i=0;i<FN;i++){ fb[i*3]=(Math.random()-.5)*44; fb[i*3+1]=.8+Math.random()*10; fb[i*3+2]=(Math.random()-.5)*44; fph.push(Math.random()*6.28); }
+        const fg=new THREE.BufferGeometry(); fg.setAttribute('position',new THREE.BufferAttribute(fp,3));
+        const fly=new THREE.Points(fg,new THREE.PointsMaterial({color:0xfef08a,size:.5,map:glowTex,transparent:true,opacity:.9,
+          blending:THREE.AdditiveBlending,depthWrite:false,fog:false}));
+        fly.frustumCulled=false; scene.add(fly);
+
+        // Bóng đổ mềm dưới chân nhân vật
+        const shGeo=new THREE.CircleGeometry(.6,16).rotateX(-Math.PI/2);
+        const shMat=new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.38,depthWrite:false});
+        function addShadows(){ studentCharacters.forEach(s=>{ if(!s.hasShadow){ const m=new THREE.Mesh(shGeo,shMat); m.position.y=.05; s.mesh.add(m); s.hasShadow=true; } }); }
+        addShadows();
+        const oSpawn=window.spawnClassCharacters;
+        window.spawnClassCharacters=function(l){ oSpawn(l); addShadows(); };
+
+        function extraFX(dt,t,beaming){
+          for(let i=0;i<FN;i++){ const ph=fph[i];
+            fp[i*3]=fb[i*3]+Math.sin(t*.5+ph)*1.5; fp[i*3+1]=fb[i*3+1]+Math.sin(t*.9+ph*2)*.8; fp[i*3+2]=fb[i*3+2]+Math.cos(t*.4+ph)*1.5; }
+          fg.attributes.position.needsUpdate=true; fly.material.opacity=.6+Math.sin(t*2)*.3;
+          if(beaming){ tractorBeamMesh.material.opacity=.22+Math.sin(t*12)*.06; inner.material.opacity=.2+Math.sin(t*9)*.08; }
+          else inner.material.opacity=0;
+        }
+
+        // Gắn thêm vào các hàm có sẵn
+        const oSelect = window.selectQuizAnswer;
+        window.selectQuizAnswer = function(k){ oSelect(k); if(k === QUESTIONS[currentQuestionIndex].correct) fxConfetti(); };
+        const oSum = window.showFinalSummaryModal;
+        window.showFinalSummaryModal = function(){ oSum(); setTimeout(()=>fxConfetti(260),300); };
+
+        // Vòng lặp hiệu ứng, chèn vào ngay trước mỗi lần render
+        const clk = new THREE.Clock(), baseRender = renderer.render.bind(renderer);
+        let prev = 'IDLE', shootT = 0;
+        renderer.render = function(s,cam){
+          const dt = Math.min(clk.getDelta(),.1), t = clk.elapsedTime;
+          const beaming = gameState === 'BEAMING', scanning = gameState === 'SCANNING';
+
+          engine.material.opacity = .55 + Math.sin(t*5)*.15 + (beaming?.3:0);
+          spot.intensity += ((beaming?3:.4) - spot.intensity)*dt*5;
+
+          target.visible = scanning || beaming;
+          target.position.x = ufoPos.x; target.position.z = ufoPos.z;
+          target.material.opacity = beaming ? .85 : .5;
+          target.scale.setScalar(1 + Math.sin(t*10)*.08 + (beaming?.15:0));
+          target.rotation.y += dt*2;
+
+          rings.forEach((r,i)=>{
+            const f = (t*.9 + i/rings.length) % 1, d = f*13 + 1;
+            r.position.y = -d; r.scale.setScalar(Math.max(.2,3.4*d/14));
+            r.material.opacity = beaming ? (1-f)*.8 : 0;
+          });
+
+          if(scanning) emit(ufoPos.clone().setY(ufoPos.y-1),0x38bdf8,3,2,0);
+          if(beaming && selectedStudentObj){
+            emit(selectedStudentObj.mesh.position.clone().setY(selectedStudentObj.mesh.position.y+1.2),0xfde68a,4,1.5,1);
+            if(prev !== 'BEAMING') emit(selectedStudentObj.basePos.clone().setY(.3),0x34d399,50,9,3);
+          }
+          if(gameState === 'REVEALED' && prev === 'BEAMING') emit(ufoPos.clone(),0xffffff,120,16,3);
+          prev = gameState;
+
+          for(let k=0;k<N;k++){
+            if(life[k] <= 0) continue;
+            life[k] -= dt*.9; const v = vel[k]; v.y -= 3*dt;
+            pPos[k*3] += v.x*dt; pPos[k*3+1] += v.y*dt; pPos[k*3+2] += v.z*dt;
+            const f = Math.max(0,life[k]);
+            pCol[k*3] = base[k*3]*f; pCol[k*3+1] = base[k*3+1]*f; pCol[k*3+2] = base[k*3+2]*f;
+            if(life[k] <= 0) pPos[k*3+1] = -999;
+          }
+          pg.attributes.position.needsUpdate = true; pg.attributes.color.needsUpdate = true;
+
+          shootT -= dt; if(shootT < 0){ spawnShooter(); shootT = 1.5 + Math.random()*3; }
+          for(let i=shooters.length-1;i>=0;i--){
+            const o = shooters[i]; o.t += dt; o.m.position.addScaledVector(o.v,dt);
+            o.m.quaternion.copy(camera.quaternion); o.m.rotateZ(.33); o.m.material.opacity = Math.max(0,1-o.t/1.4);
+            if(o.t > 1.4){ scene.remove(o.m); shooters.splice(i,1); }
+          }
+          drawConf(dt);
+          extraFX(dt,t,beaming);
+
+          // rung camera khi hút
+          const sh = beaming ? Math.min(1,beamProgress)*.14 : 0;
+          cam.position.x += (Math.random()-.5)*sh; cam.position.y += (Math.random()-.5)*sh;
+          baseRender(s,cam);
+        };
+      }
+    })();
+    </script>
+</body>
+</html>
