@@ -37,8 +37,8 @@
         /* Sci-Fi Glassmorphism */
         .sci-glass {
             background: rgba(10, 18, 42, 0.82);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             border: 1px solid rgba(56, 189, 248, 0.35);
             box-shadow: 0 0 25px rgba(14, 165, 233, 0.15);
         }
@@ -100,7 +100,6 @@
             font-weight: 700;
             letter-spacing: 0.02em;
             background: rgba(10, 18, 42, 0.82);
-            backdrop-filter: blur(4px);
             color: #f1f5f9;
             border: 1px solid rgba(56, 189, 248, 0.45);
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
@@ -184,20 +183,15 @@
         @keyframes shimmer{to{background-position:200% center}}
         #reveal-student-name{background-size:200% auto;animation:shimmer 2.2s linear infinite}
         @keyframes btnPulse{0%,100%{box-shadow:0 0 18px rgba(16,185,129,.5)}50%{box-shadow:0 0 42px rgba(52,211,153,.95)}}
-        #btn-abduct-trigger:not(:disabled){animation:btnPulse 1.8s ease-in-out infinite}
         #fx-vignette{position:fixed;inset:0;z-index:4;pointer-events:none;
             background:radial-gradient(ellipse at center,transparent 55%,rgba(2,6,23,.75) 100%)}
         #fx-scan{position:fixed;inset:0;z-index:4;pointer-events:none;opacity:.07;
             background:repeating-linear-gradient(0deg,#fff 0 1px,transparent 1px 3px)}
         .option-card:hover:not(.locked){box-shadow:0 0 22px rgba(56,189,248,.45)}
-        .student-label.scanning{animation:btnPulse .5s ease-in-out infinite}
         #fx-confetti{position:fixed;inset:0;z-index:70;pointer-events:none}
         /* --- đẹp hơn --- */
         @keyframes borderFlow{0%,100%{border-color:rgba(56,189,248,.4)}50%{border-color:rgba(52,211,153,.85)}}
-        #question-modal>div,#summary-modal>div{animation:popIn .5s cubic-bezier(.34,1.56,.64,1),borderFlow 3.5s ease-in-out infinite}
         #quiz-question-text{text-shadow:0 0 18px rgba(56,189,248,.4)}
-        header h1.text-slate-100{background:linear-gradient(90deg,#e2e8f0,#7dd3fc,#a7f3d0,#e2e8f0);background-size:200% auto;
-            -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 5s linear infinite}
         .sci-glass{box-shadow:0 0 25px rgba(14,165,233,.18),inset 0 1px 0 rgba(255,255,255,.08)}
         .option-card{background-image:linear-gradient(100deg,rgba(255,255,255,.04),transparent 40%)}
         #progress-dots>div:not(.bg-slate-800\/70){transition:all .3s}
@@ -236,7 +230,7 @@
                 <i class="text-cyan-400 text-sm" style="font-style:normal">👥</i>
                 <div class="text-xs">
                     <span class="text-slate-400 block leading-none text-[10px]">Dưới đất</span>
-                    <span id="hud-remaining-count" class="font-extrabold text-sm text-white">83</span>
+                    <span id="hud-remaining-count" class="font-extrabold text-sm text-white">78</span>
                 </div>
             </div>
 
@@ -290,7 +284,7 @@
     </div>
 
     <!-- 1. MODAL: CLASS ROSTER INPUT -->
-    <div id="roster-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div id="roster-modal" class="fixed inset-0 z-50 bg-slate-950/80 flex items-center justify-center p-4">
         <div class="sci-glass rounded-3xl max-w-2xl w-full p-6 md:p-8 border border-cyan-400/40 shadow-2xl">
             <div class="flex items-start justify-between gap-4 mb-4">
                 <div class="flex items-center gap-3">
@@ -310,7 +304,7 @@
             <div class="mb-4">
                 <div class="flex items-center justify-between text-xs font-semibold text-cyan-300 mb-2">
                     <span><i class="mr-1" style="font-style:normal">📋</i> Dán danh sách Họ và Tên:</span>
-                    <span id="roster-line-counter" class="bg-cyan-500/20 border border-cyan-400/30 px-2.5 py-0.5 rounded-full">83 học sinh</span>
+                    <span id="roster-line-counter" class="bg-cyan-500/20 border border-cyan-400/30 px-2.5 py-0.5 rounded-full">78 học sinh</span>
                 </div>
                 <textarea id="roster-textarea" rows="7" oninput="updateRosterCounter()"
                     class="w-full rounded-2xl bg-slate-900/90 border border-slate-700 focus:border-cyan-400 focus:outline-none p-3.5 text-sm text-slate-100 font-medium leading-relaxed select-text"
@@ -320,7 +314,7 @@
             <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
                 <div class="flex items-center gap-2">
                     <button onclick="loadSampleRoster()" class="text-xs bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-600 px-3 py-2 rounded-xl font-semibold transition">
-                        <i class="mr-1" style="font-style:normal">✨</i> Danh sách lớp (83)
+                        <i class="mr-1" style="font-style:normal">✨</i> Danh sách lớp (78)
                     </button>
                     <button onclick="clearRosterInput()" class="text-xs bg-slate-800 hover:bg-rose-950/60 text-rose-300 border border-slate-600 px-3 py-2 rounded-xl font-semibold transition">
                         <i class="mr-1" style="font-style:normal">🗑️</i> Xóa trắng
@@ -343,7 +337,7 @@
     </div>
 
     <!-- 2. OVERLAY: SELECTED STUDENT REVEAL -->
-    <div id="abducted-reveal-modal" class="fixed inset-0 z-30 pointer-events-none hidden flex-col items-center justify-center p-4 bg-slate-950/45 backdrop-blur-[3px]">
+    <div id="abducted-reveal-modal" class="fixed inset-0 z-30 pointer-events-none hidden flex-col items-center justify-center p-4 bg-slate-950/45">
         <div class="sci-glass-emerald abduct-banner-glow rounded-3xl max-w-xl w-full p-6 text-center pointer-events-auto">
             <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-extrabold uppercase tracking-widest mb-3">
                 <i class="animate-pulse" style="font-style:normal">📡</i>
@@ -372,7 +366,7 @@
     </div>
 
     <!-- 3. MODAL: QUIZ QUESTION SCREEN -->
-    <div id="question-modal" class="fixed inset-0 z-40 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div id="question-modal" class="fixed inset-0 z-40 bg-slate-950/85 hidden items-center justify-center p-3 sm:p-6 overflow-y-auto">
         <div class="sci-glass rounded-3xl max-w-3xl w-full p-5 sm:p-7 border border-cyan-400/50 shadow-2xl my-auto">
             <div class="flex flex-wrap items-center justify-between gap-3 pb-3 mb-4 border-b border-slate-700/80">
                 <div class="flex items-center gap-3">
@@ -425,7 +419,7 @@
     </div>
 
     <!-- 4. MODAL: FINAL SUMMARY -->
-    <div id="summary-modal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-lg hidden items-center justify-center p-4 overflow-y-auto">
+    <div id="summary-modal" class="fixed inset-0 z-50 bg-slate-950/90 hidden items-center justify-center p-4 overflow-y-auto">
         <div class="sci-glass rounded-3xl max-w-3xl w-full p-6 sm:p-7 border border-emerald-400/50 shadow-2xl my-auto text-center">
             <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 mx-auto flex items-center justify-center text-slate-950 shadow-xl shadow-emerald-500/30 mb-3 float-anim">
                 <i class="text-2xl" style="font-style:normal">🏆</i>
@@ -477,7 +471,7 @@
     </div>
 
     <!-- Lớp hiệu ứng nâng cấp -->
-    <div id="fx-vignette"></div><div id="fx-scan"></div>
+    <div id="fx-vignette"></div>
     <canvas id="fx-confetti"></canvas>
 
     <script>
@@ -556,7 +550,6 @@
             "NGUYỄN NGỌC ANH",
             "NGUYỄN VÂN ANH",
             "TRẦN HÀ ANH",
-            "VÕ QUỲNH ANH",
             "NGUYỄN XUÂN BÁCH",
             "PHẠM NGỌC BÍCH",
             "ĐINH THUỲ CHANG",
@@ -567,11 +560,9 @@
             "HOÀNG THỊ DIỆU",
             "MAI PHƯƠNG DUNG",
             "NGUYỄN TẤN DŨNG",
-            "HOÀNG ĐÔNG DƯƠNG",
             "PHAN TÂM ĐAN",
             "TRẦN HẢI ĐĂNG",
             "BÙI HƯƠNG GIANG",
-            "VŨ NGUYỄN GIÁP",
             "NGUYỄN NGỌC HÀ",
             "TRƯƠNG THANH HÀ",
             "TRẦN THỊ MINH HẠNH",
@@ -602,8 +593,6 @@
             "NGUYỄN KHÁNH NGỌC",
             "TRẦN BẢO NGỌC",
             "ĐỖ NGUYỄN THẢO NGUYÊN",
-            "NGUYỄN THỊ MINH NGUYỆT",
-            "NGUYỄN THỊ YẾN NHI",
             "PHẠM THỊ NHUNG",
             "ĐỖ PHẠM VÂN PHI",
             "ĐOÀN NAM PHƯƠNG",
@@ -774,7 +763,7 @@
 
             renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Optimized pixel ratio for max FPS
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25)); // Optimized pixel ratio for max FPS
             renderer.shadowMap.enabled = false; // Disabled heavy shadow maps to guarantee 60 FPS silky smooth performance
             renderer.toneMapping = THREE.ACESFilmicToneMapping;
             container.appendChild(renderer.domElement);
@@ -1037,9 +1026,6 @@
             belly.position.y = 0.88;
             torsoGroup.add(belly);
 
-            const belt = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.05, 6, 16).rotateX(Math.PI / 2), sharedMats.boot);
-            belt.position.y = 0.64;
-            torsoGroup.add(belt);
 
             const jetpack = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.6, 0.3), sharedMats.whiteTrim);
             jetpack.position.set(0, 0.92, -0.4);
@@ -1075,7 +1061,7 @@
             visor.position.set(0, 0, 0.32);
             headGroup.add(visor);
 
-            const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.06, 6, 6), sharedMats.eye);
+            const leftEye = new THREE.Mesh(sharedGeos.eye || (sharedGeos.eye = new THREE.SphereGeometry(0.06, 6, 6)), sharedMats.eye);
             leftEye.position.set(-0.14, 0.04, 0.54);
             headGroup.add(leftEye);
 
@@ -1083,12 +1069,6 @@
             rightEye.position.x = 0.14;
             headGroup.add(rightEye);
 
-            const cheek = new THREE.Mesh(new THREE.SphereGeometry(0.04, 6, 6), sharedMats.cheek);
-            cheek.position.set(-0.22, -0.04, 0.52);
-            headGroup.add(cheek);
-            const cheekR = cheek.clone();
-            cheekR.position.x = 0.22;
-            headGroup.add(cheekR);
 
             // Accessory on head
             const accType = index % 4;
@@ -1674,7 +1654,8 @@
             camera.lookAt(camTarget);
 
             renderer.render(scene, camera);
-            update2DLabels();
+            window._lf = (window._lf || 0) + 1;
+            if (window._lf % 2 === 0) update2DLabels();
         }
 
         window.onload = function () {
@@ -1708,13 +1689,12 @@
         };
 
         // Tinh vân nền
-        [[-70,40,-110,0x6366f1],[80,25,-100,0x10b981],[0,60,-130,0xec4899],[-90,-5,-60,0x06b6d4],[95,50,-40,0x8b5cf6]]
-          .forEach(([x,y,z,col])=>{ const n = glow(col,120,.22); n.position.set(x,y,z); scene.add(n); });
+        [[-70,40,-110,0x6366f1],[80,25,-100,0x10b981],[0,60,-130,0xec4899]]
+          .forEach(([x,y,z,col])=>{ const n = glow(col,100,.17); n.position.set(x,y,z); scene.add(n); });
 
         // UFO: quầng động cơ + đèn chiếu
         const engine = glow(0x34d399,10,.7); engine.position.y = -1.3; ufoGroup.add(engine);
-        const spot = new THREE.PointLight(0x34d399,0.4,45); spot.position.y = -2; ufoGroup.add(spot);
-        ufoLightRing.children.forEach((o,i)=>{ const h = glow(i%2?0x38bdf8:0x34d399,1.6,.8); o.add(h); });
+        const spot = { intensity: 0 };
 
         // Vòng mục tiêu dưới đất
         const target = new THREE.Mesh(new THREE.RingGeometry(2.6,3.2,48).rotateX(-Math.PI/2),
@@ -1723,14 +1703,14 @@
 
         // Vòng năng lượng chạy lên theo tia hút
         const rings = [];
-        for(let i=0;i<6;i++){
+        for(let i=0;i<4;i++){
           const r = new THREE.Mesh(new THREE.TorusGeometry(1,.05,6,36).rotateX(Math.PI/2),
             new THREE.MeshBasicMaterial({color:0xa7f3d0,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false}));
           ufoGroup.add(r); rings.push(r);
         }
 
         // Hệ hạt (tia lửa, nổ)
-        const N = 400, pPos = new Float32Array(N*3).fill(-999), pCol = new Float32Array(N*3), base = new Float32Array(N*3);
+        const N = 200, pPos = new Float32Array(N*3).fill(-999), pCol = new Float32Array(N*3), base = new Float32Array(N*3);
         const vel = Array.from({length:N},()=>new THREE.Vector3()), life = new Float32Array(N); let head = 0;
         const pg = new THREE.BufferGeometry();
         pg.setAttribute('position',new THREE.BufferAttribute(pPos,3)); pg.setAttribute('color',new THREE.BufferAttribute(pCol,3));
@@ -1759,7 +1739,7 @@
         // Pháo giấy
         const cv = document.getElementById('fx-confetti'), cx = cv.getContext('2d'); let conf = [];
         function fit(){ cv.width = innerWidth; cv.height = innerHeight; } fit(); addEventListener('resize',fit);
-        window.fxConfetti = function(n=140){
+        window.fxConfetti = function(n=80){
           const cols = ['#34d399','#38bdf8','#fbbf24','#f472b6','#a78bfa','#fb7185'];
           for(let i=0;i<n;i++) conf.push({x:innerWidth/2,y:innerHeight*.45,vx:(Math.random()-.5)*16,vy:-Math.random()*16-4,
             s:5+Math.random()*6,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[i%6],l:1});
@@ -1794,7 +1774,7 @@
         const isl=glow(0x0ea5e9,75,.2); isl.position.y=-3; scene.add(isl);
 
         // Đom đóm bay trên đảo
-        const FN=120, fb=new Float32Array(FN*3), fp=new Float32Array(FN*3), fph=[];
+        const FN=40, fb=new Float32Array(FN*3), fp=new Float32Array(FN*3), fph=[];
         for(let i=0;i<FN;i++){ fb[i*3]=(Math.random()-.5)*44; fb[i*3+1]=.8+Math.random()*10; fb[i*3+2]=(Math.random()-.5)*44; fph.push(Math.random()*6.28); }
         const fg=new THREE.BufferGeometry(); fg.setAttribute('position',new THREE.BufferAttribute(fp,3));
         const fly=new THREE.Points(fg,new THREE.PointsMaterial({color:0xfef08a,size:.5,map:glowTex,transparent:true,opacity:.9,
@@ -1804,12 +1784,13 @@
         // Bóng đổ mềm dưới chân nhân vật
         const shGeo=new THREE.CircleGeometry(.6,16).rotateX(-Math.PI/2);
         const shMat=new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.38,depthWrite:false});
-        function addShadows(){ studentCharacters.forEach(s=>{ if(!s.hasShadow){ const m=new THREE.Mesh(shGeo,shMat); m.position.y=.05; s.mesh.add(m); s.hasShadow=true; } }); }
+        function addShadows(){}
         addShadows();
         const oSpawn=window.spawnClassCharacters;
         window.spawnClassCharacters=function(l){ oSpawn(l); addShadows(); };
 
         function extraFX(dt,t,beaming){
+          for(const st of studentCharacters){ const fr=st.mesh.userData.footRing; if(fr) fr.visible = fr.material.opacity>.01; }
           for(let i=0;i<FN;i++){ const ph=fph[i];
             fp[i*3]=fb[i*3]+Math.sin(t*.5+ph)*1.5; fp[i*3+1]=fb[i*3+1]+Math.sin(t*.9+ph*2)*.8; fp[i*3+2]=fb[i*3+2]+Math.cos(t*.4+ph)*1.5; }
           fg.attributes.position.needsUpdate=true; fly.material.opacity=.6+Math.sin(t*2)*.3;
@@ -1821,12 +1802,13 @@
         const oSelect = window.selectQuizAnswer;
         window.selectQuizAnswer = function(k){ oSelect(k); if(k === QUESTIONS[currentQuestionIndex].correct) fxConfetti(); };
         const oSum = window.showFinalSummaryModal;
-        window.showFinalSummaryModal = function(){ oSum(); setTimeout(()=>fxConfetti(260),300); };
+        window.showFinalSummaryModal = function(){ oSum(); setTimeout(()=>fxConfetti(140),300); };
 
         // Vòng lặp hiệu ứng, chèn vào ngay trước mỗi lần render
         const clk = new THREE.Clock(), baseRender = renderer.render.bind(renderer);
-        let prev = 'IDLE', shootT = 0;
+        let prev = 'IDLE', shootT = 0, qf = 0;
         renderer.render = function(s,cam){
+          if((gameState==='QUIZ'||gameState==='SUMMARY') && (qf++%2)!==0) return;
           const dt = Math.min(clk.getDelta(),.1), t = clk.elapsedTime;
           const beaming = gameState === 'BEAMING', scanning = gameState === 'SCANNING';
 
@@ -1845,12 +1827,12 @@
             r.material.opacity = beaming ? (1-f)*.8 : 0;
           });
 
-          if(scanning) emit(ufoPos.clone().setY(ufoPos.y-1),0x38bdf8,3,2,0);
+          if(scanning && Math.random()<.5) emit(ufoPos.clone().setY(ufoPos.y-1),0x38bdf8,1,2,0);
           if(beaming && selectedStudentObj){
-            emit(selectedStudentObj.mesh.position.clone().setY(selectedStudentObj.mesh.position.y+1.2),0xfde68a,4,1.5,1);
-            if(prev !== 'BEAMING') emit(selectedStudentObj.basePos.clone().setY(.3),0x34d399,50,9,3);
+            emit(selectedStudentObj.mesh.position.clone().setY(selectedStudentObj.mesh.position.y+1.2),0xfde68a,2,1.5,1);
+            if(prev !== 'BEAMING') emit(selectedStudentObj.basePos.clone().setY(.3),0x34d399,30,9,3);
           }
-          if(gameState === 'REVEALED' && prev === 'BEAMING') emit(ufoPos.clone(),0xffffff,120,16,3);
+          if(gameState === 'REVEALED' && prev === 'BEAMING') emit(ufoPos.clone(),0xffffff,60,16,3);
           prev = gameState;
 
           for(let k=0;k<N;k++){
@@ -1863,7 +1845,7 @@
           }
           pg.attributes.position.needsUpdate = true; pg.attributes.color.needsUpdate = true;
 
-          shootT -= dt; if(shootT < 0){ spawnShooter(); shootT = 1.5 + Math.random()*3; }
+          shootT -= dt; if(shootT < 0){ spawnShooter(); shootT = 4 + Math.random()*6; }
           for(let i=shooters.length-1;i>=0;i--){
             const o = shooters[i]; o.t += dt; o.m.position.addScaledVector(o.v,dt);
             o.m.quaternion.copy(camera.quaternion); o.m.rotateZ(.33); o.m.material.opacity = Math.max(0,1-o.t/1.4);
