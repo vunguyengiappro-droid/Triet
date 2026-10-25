@@ -11,7 +11,7 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Dancing+Script:wght@700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -179,7 +179,7 @@
 
         /* ===== HIỆU ỨNG NÂNG CẤP ===== */
         @keyframes popIn{0%{opacity:0;transform:scale(.82) translateY(24px)}100%{opacity:1;transform:none}}
-        #question-modal>div,#abducted-reveal-modal>div,#summary-modal>div,#roster-modal>div{animation:popIn .5s cubic-bezier(.34,1.56,.64,1)}
+        #question-modal>div,#abducted-reveal-modal>div,#summary-modal>.thankyou-card,#roster-modal>div{animation:popIn .55s cubic-bezier(.34,1.56,.64,1)}
         @keyframes shimmer{to{background-position:200% center}}
         #reveal-student-name{background-size:200% auto;animation:shimmer 2.2s linear infinite}
         @keyframes btnPulse{0%,100%{box-shadow:0 0 18px rgba(16,185,129,.5)}50%{box-shadow:0 0 42px rgba(52,211,153,.95)}}
@@ -195,6 +195,121 @@
         .sci-glass{box-shadow:0 0 25px rgba(14,165,233,.18),inset 0 1px 0 rgba(255,255,255,.08)}
         .option-card{background-image:linear-gradient(100deg,rgba(255,255,255,.04),transparent 40%)}
         #progress-dots>div:not(.bg-slate-800\/70){transition:all .3s}
+
+        /* ===== BẢNG CẢM ƠN ĐẶC SẮC ===== */
+        @keyframes auroraShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes spinSlow {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        @keyframes spinReverseSlow {
+            from { transform: translate(-50%, -50%) rotate(360deg); }
+            to { transform: translate(-50%, -50%) rotate(0deg); }
+        }
+        @keyframes orbFloat1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(45px, -35px) scale(1.18); }
+        }
+        @keyframes orbFloat2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-50px, 30px) scale(1.22); }
+        }
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes crownPulse {
+            0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 18px rgba(251, 191, 36, 0.8)); }
+            50% { transform: translateY(-8px) scale(1.08); filter: drop-shadow(0 0 32px rgba(52, 211, 153, 1)); }
+        }
+
+        .thankyou-backdrop {
+            background: radial-gradient(circle at 20% 20%, rgba(79, 70, 229, 0.45) 0%, transparent 45%),
+                        radial-gradient(circle at 80% 30%, rgba(236, 72, 153, 0.4) 0%, transparent 45%),
+                        radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.45) 0%, transparent 50%),
+                        linear-gradient(135deg, #030712 0%, #0f172a 40%, #1e1b4b 75%, #042f2e 100%);
+            background-size: 200% 200%;
+            animation: auroraShift 12s ease infinite;
+        }
+
+        .thankyou-card {
+            position: relative;
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.82) 0%, rgba(30, 27, 75, 0.78) 50%, rgba(6, 46, 48, 0.82) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            box-shadow: 0 0 60px rgba(56, 189, 248, 0.35),
+                        0 0 110px rgba(236, 72, 153, 0.22),
+                        inset 0 0 35px rgba(255, 255, 255, 0.08);
+        }
+
+        .thankyou-card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            z-index: -1;
+            border-radius: 1.85rem;
+            background: linear-gradient(120deg, #34d399, #38bdf8, #fbbf24, #f472b6, #a78bfa, #34d399);
+            background-size: 300% 300%;
+            animation: auroraShift 6s linear infinite;
+        }
+
+        .thankyou-script {
+            font-family: 'Dancing Script', cursive;
+            background: linear-gradient(90deg, #fde68a, #f9a8d4, #67e8f9, #fde68a);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShine 4s linear infinite;
+            filter: drop-shadow(0 2px 12px rgba(251, 191, 36, 0.45));
+        }
+
+        .thankyou-main-title {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            font-weight: 900;
+            background: linear-gradient(110deg, #ffffff 0%, #fef08a 20%, #6ee7b7 42%, #67e8f9 65%, #f9a8d4 85%, #ffffff 100%);
+            background-size: 250% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShine 5s ease-in-out infinite;
+            filter: drop-shadow(0 4px 25px rgba(56, 189, 248, 0.5));
+            line-height: 1.28;
+        }
+
+        .thankyou-highlight-box {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.14) 0%, rgba(16, 185, 129, 0.16) 50%, rgba(236, 72, 153, 0.14) 100%);
+            border: 1px solid rgba(253, 224, 71, 0.45);
+            box-shadow: 0 0 35px rgba(251, 191, 36, 0.18), inset 0 0 20px rgba(255, 255, 255, 0.06);
+        }
+
+        .halo-ring-1 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 560px;
+            height: 560px;
+            border-radius: 50%;
+            border: 1px dashed rgba(103, 232, 249, 0.25);
+            animation: spinSlow 38s linear infinite;
+            pointer-events: none;
+        }
+        .halo-ring-2 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 720px;
+            height: 720px;
+            border-radius: 50%;
+            border: 1px dotted rgba(244, 114, 182, 0.22);
+            animation: spinReverseSlow 50s linear infinite;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="relative select-none">
@@ -418,53 +533,89 @@
         </div>
     </div>
 
-    <!-- 4. MODAL: FINAL SUMMARY -->
-    <div id="summary-modal" class="fixed inset-0 z-50 bg-slate-950/90 hidden items-center justify-center p-4 overflow-y-auto">
-        <div class="sci-glass rounded-3xl max-w-3xl w-full p-6 sm:p-7 border border-emerald-400/50 shadow-2xl my-auto text-center">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 mx-auto flex items-center justify-center text-slate-950 shadow-xl shadow-emerald-500/30 mb-3 float-anim">
-                <i class="text-2xl" style="font-style:normal">🏆</i>
-            </div>
+    <!-- 4. MODAL: BẢNG CẢM ƠN ĐẶC SẮC -->
+    <div id="summary-modal" class="fixed inset-0 z-50 thankyou-backdrop hidden items-center justify-center p-4 overflow-y-auto">
+        <!-- Hiệu ứng quầng sáng & vòng ngân hà xoay phía sau -->
+        <div class="fixed inset-0 overflow-hidden pointer-events-none">
+            <div class="halo-ring-1"></div>
+            <div class="halo-ring-2"></div>
+            <div class="absolute top-1/4 left-1/5 w-72 h-72 rounded-full bg-fuchsia-500/25 blur-3xl" style="animation: orbFloat1 8s ease-in-out infinite;"></div>
+            <div class="absolute bottom-1/4 right-1/5 w-80 h-80 rounded-full bg-cyan-400/25 blur-3xl" style="animation: orbFloat2 9s ease-in-out infinite;"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-emerald-400/15 blur-3xl"></div>
+        </div>
 
-            <span class="text-[11px] font-extrabold uppercase tracking-widest text-emerald-400 bg-emerald-500/15 px-3 py-1 rounded-full border border-emerald-400/30">
-                HOÀN THÀNH 5 CÂU HỎI TRẮC NGHIỆM
-            </span>
-            <h2 class="text-xl sm:text-2xl font-black text-white mt-2 mb-1">
-                Báo Cáo Chiến Dịch UFO Bắt Người
-            </h2>
-            <p class="text-xs text-slate-300 mb-5">
-                Chủ đề: Nguồn gốc, bản chất nhận thức và các giai đoạn nhận thức
-            </p>
+        <!-- Thẻ Cảm Ơn Chính -->
+        <div class="thankyou-card rounded-[1.75rem] max-w-3xl w-full p-6 sm:p-10 my-auto text-center relative z-10 overflow-hidden">
+            <!-- Họa tiết góc lấp lánh -->
+            <div class="absolute top-4 left-5 text-amber-300/80 text-xl animate-pulse">✦</div>
+            <div class="absolute top-4 right-5 text-cyan-300/80 text-xl animate-pulse">✦</div>
+            <div class="absolute bottom-4 left-5 text-pink-300/80 text-xl animate-pulse">✦</div>
+            <div class="absolute bottom-4 right-5 text-emerald-300/80 text-xl animate-pulse">✦</div>
 
-            <div class="grid grid-cols-3 gap-3 max-w-md mx-auto mb-5">
-                <div class="bg-slate-900/80 border border-slate-700 rounded-2xl p-2.5">
-                    <span class="text-[11px] text-slate-400 block">Tổng câu</span>
-                    <span class="text-lg font-black text-cyan-400">5</span>
-                </div>
-                <div class="bg-slate-900/80 border border-slate-700 rounded-2xl p-2.5">
-                    <span class="text-[11px] text-slate-400 block">Trả lời đúng</span>
-                    <span id="summary-correct-count" class="text-lg font-black text-emerald-400">5</span>
-                </div>
-                <div class="bg-slate-900/80 border border-slate-700 rounded-2xl p-2.5">
-                    <span class="text-[11px] text-slate-400 block">Tỷ lệ</span>
-                    <span id="summary-accuracy" class="text-lg font-black text-amber-300">100%</span>
+            <!-- Biểu tượng vương miện / vũ trụ tỏa sáng -->
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-amber-300 via-emerald-400 to-cyan-500 p-0.5 shadow-2xl mb-4" style="animation: crownPulse 2.8s ease-in-out infinite;">
+                <div class="w-full h-full bg-slate-950/85 rounded-[1.35rem] flex items-center justify-center text-4xl">
+                    🌸
                 </div>
             </div>
 
-            <div class="text-left bg-slate-900/75 border border-slate-700/80 rounded-2xl p-3.5 mb-5 max-h-56 overflow-y-auto">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-cyan-300 mb-2.5">
-                    <i class="mr-1" style="font-style:normal">📝</i> Lịch sử 5 người chơi đã được UFO chọn:
-                </h3>
+            <!-- Nhãn phụ -->
+            <div class="mb-2">
+                <span class="inline-flex items-center gap-2 text-[11px] sm:text-xs font-extrabold uppercase tracking-[0.25em] text-amber-200 bg-gradient-to-r from-amber-500/20 via-pink-500/20 to-cyan-500/20 px-4 py-1.5 rounded-full border border-amber-300/40 shadow-lg">
+                    <span>✨</span> HOÀN THÀNH BÀI THUYẾT TRÌNH TRIẾT HỌC MÁC - LÊNIN <span>✨</span>
+                </span>
+            </div>
+
+            <!-- Dòng chữ nghệ thuật Thank You -->
+            <div class="thankyou-script text-4xl sm:text-6xl font-bold my-1 select-none">
+                Thank You!
+            </div>
+
+            <!-- Khung thông điệp cảm ơn chính thật đặc sắc -->
+            <div class="thankyou-highlight-box rounded-3xl p-5 sm:p-8 my-4 relative">
+                <h2 class="thankyou-main-title text-2xl sm:text-3xl md:text-4xl tracking-tight">
+                    Cảm ơn cô và các bạn đã lắng nghe<br class="hidden sm:inline" /> bài thuyết trình của chúng em!
+                </h2>
+
+                <div class="mt-4 flex items-center justify-center gap-3 text-amber-200/90 text-xs sm:text-sm font-semibold">
+                    <span class="h-[1px] w-10 sm:w-16 bg-gradient-to-r from-transparent to-amber-300/70"></span>
+                    <span>💖 Kính chúc Cô và các bạn thật nhiều sức khỏe, niềm vui & học tập tốt 💖</span>
+                    <span class="h-[1px] w-10 sm:w-16 bg-gradient-to-l from-transparent to-amber-300/70"></span>
+                </div>
+            </div>
+
+            <!-- Hàng huy hiệu kết quả ngắn gọn (vẫn giữ ID để đồng bộ dữ liệu) -->
+            <div class="flex flex-wrap items-center justify-center gap-2.5 mb-5 text-xs">
+                <div class="px-3.5 py-1.5 rounded-full bg-slate-900/75 border border-cyan-400/35 text-cyan-200 flex items-center gap-1.5">
+                    <span>🛸 Đã hoàn thành:</span>
+                    <strong id="summary-correct-count" class="text-emerald-300 font-black">5/5</strong>
+                    <span class="text-slate-400">câu</span>
+                    <span class="text-amber-300 font-bold">(<span id="summary-accuracy">100%</span>)</span>
+                </div>
+                <button onclick="toggleHistoryDetails()" class="px-3.5 py-1.5 rounded-full bg-slate-900/75 hover:bg-slate-800 border border-pink-400/35 text-pink-200 font-semibold transition flex items-center gap-1.5">
+                    <span>🌟</span>
+                    <span id="btn-toggle-history-text">Xem 5 bạn đã tham gia trả lời</span>
+                </button>
+            </div>
+
+            <!-- Danh sách 5 bạn (ẩn mặc định để bảng cảm ơn gọn đẹp, bấm vào sẽ hiện) -->
+            <div id="summary-history-wrapper" class="hidden text-left bg-slate-950/80 border border-cyan-400/30 rounded-2xl p-3.5 mb-5 max-h-44 overflow-y-auto">
                 <div id="summary-history-list" class="space-y-2"></div>
             </div>
 
+            <!-- Các nút điều khiển cuối màn -->
             <div class="flex flex-wrap items-center justify-center gap-3">
+                <button onclick="if(window.fxConfetti) window.fxConfetti(180); playFanfareSound();" class="btn-ufo text-slate-950 font-black text-xs sm:text-sm px-5 py-3 rounded-2xl flex items-center gap-2">
+                    <i style="font-style:normal">🎆</i>
+                    <span>BẮN PHÁO HOA CHÚC MỪNG</span>
+                </button>
                 <button onclick="playAgainKeepRemaining()" class="btn-beam text-slate-950 font-black text-xs sm:text-sm px-5 py-3 rounded-2xl flex items-center gap-2">
                     <i class="" style="font-style:normal">🔄</i>
-                    <span>CHƠI LƯỢT MỚI (GIỮ DANH SÁCH)</span>
+                    <span>CHƠI LƯỢT MỚI</span>
                 </button>
                 <button onclick="openRosterModalFromSummary()" class="sci-glass hover:border-cyan-400 text-cyan-300 hover:text-white font-bold text-xs sm:text-sm px-4 py-3 rounded-2xl flex items-center gap-2 transition">
                     <i class="" style="font-style:normal">📋</i>
-                    <span>ĐỔI DANH SÁCH LỚP</span>
+                    <span>DANH SÁCH LỚP</span>
                 </button>
             </div>
         </div>
@@ -708,6 +859,40 @@
                     osc.start(now + idx * 0.15);
                     osc.stop(now + idx * 0.15 + 0.25);
                 });
+            }
+        }
+
+        function playFanfareSound() {
+            if (!soundEnabled) return;
+            ensureAudio();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const notes = [523.25, 659.25, 783.99, 1046.5, 1318.5, 1567.98];
+            notes.forEach((freq, idx) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                gain.gain.setValueAtTime(0.14, now + idx * 0.08);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.55);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now + idx * 0.08);
+                osc.stop(now + idx * 0.08 + 0.55);
+            });
+        }
+
+        function toggleHistoryDetails() {
+            const wrap = document.getElementById('summary-history-wrapper');
+            const btnText = document.getElementById('btn-toggle-history-text');
+            if (!wrap) return;
+            const isHidden = wrap.classList.contains('hidden');
+            if (isHidden) {
+                wrap.classList.remove('hidden');
+                if (btnText) btnText.textContent = 'Ẩn danh sách 5 bạn';
+            } else {
+                wrap.classList.add('hidden');
+                if (btnText) btnText.textContent = 'Xem 5 bạn đã tham gia trả lời';
             }
         }
 
@@ -1377,7 +1562,7 @@
             const nextBtn = document.getElementById('btn-next-round');
             nextBtn.classList.remove('hidden');
             nextBtn.classList.add('flex');
-            document.getElementById('btn-next-round-text').textContent = currentQuestionIndex + 1 < QUESTIONS.length ? 'TIẾP TỤC CÂU TIẾP THEO' : 'XEM TỔNG KẾT';
+            document.getElementById('btn-next-round-text').textContent = currentQuestionIndex + 1 < QUESTIONS.length ? 'TIẾP TỤC CÂU TIẾP THEO' : 'KẾT THÚC & CẢM ƠN ✨';
         }
 
         function finishCurrentQuestion() {
@@ -1412,7 +1597,7 @@
             listEl.innerHTML = '';
             gameHistory.forEach((item, idx) => {
                 const row = document.createElement('div');
-                row.className = 'p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 flex items-center justify-between gap-2 text-xs';
+                row.className = 'p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between gap-2 text-xs';
                 row.innerHTML = `
                     <div class="flex items-center gap-2.5">
                         <span class="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 font-black flex items-center justify-center">C${idx + 1}</span>
@@ -1425,6 +1610,7 @@
 
             document.getElementById('summary-modal').classList.remove('hidden');
             document.getElementById('summary-modal').classList.add('flex');
+            playFanfareSound();
         }
 
         function playAgainKeepRemaining() {
@@ -1802,7 +1988,12 @@
         const oSelect = window.selectQuizAnswer;
         window.selectQuizAnswer = function(k){ oSelect(k); if(k === QUESTIONS[currentQuestionIndex].correct) fxConfetti(); };
         const oSum = window.showFinalSummaryModal;
-        window.showFinalSummaryModal = function(){ oSum(); setTimeout(()=>fxConfetti(140),300); };
+        window.showFinalSummaryModal = function(){
+            oSum();
+            setTimeout(()=>fxConfetti(160), 200);
+            setTimeout(()=>fxConfetti(140), 1100);
+            setTimeout(()=>fxConfetti(140), 2200);
+        };
 
         // Vòng lặp hiệu ứng, chèn vào ngay trước mỗi lần render
         const clk = new THREE.Clock(), baseRender = renderer.render.bind(renderer);
@@ -1860,6 +2051,80 @@
           baseRender(s,cam);
         };
       }
+    })();
+    </script>
+
+    <!-- ===== NHẠC NỀN (tự tạo bằng WebAudio, không cần file) ===== -->
+    <script>
+    (function(){
+      // Muốn dùng bài nhạc có sẵn (ví dụ Night Cruising): dán đường dẫn file .mp3 vào đây
+      const BGM_URL = '';
+      let bgmAudio = null;
+      const BEAT = 0.4;
+      const CHORDS = [[220,261.63,329.63],[174.61,220,261.63],[261.63,329.63,392],[196,246.94,293.66]]; // Am - F - C - G
+      const ARP = [0,1,2,1,2,1,0,1];
+      let master = null, lp = null, step = 0, nextT = 0, timer = null, started = false;
+
+      function tone(freq, t, dur, type, vol, attack){
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = type; o.frequency.setValueAtTime(freq, t);
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.linearRampToValueAtTime(vol, t + attack);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        o.connect(g); g.connect(lp);
+        o.start(t); o.stop(t + dur + 0.05);
+      }
+
+      function scheduleStep(t){
+        const chord = CHORDS[Math.floor(step / 8) % 4];
+        if (step % 8 === 0) {
+          chord.forEach(f => tone(f, t, BEAT * 8.5, 'sawtooth', 0.03, 0.9));
+          tone(chord[0] / 2, t, BEAT * 8.5, 'sine', 0.07, 0.6);
+        }
+        tone(chord[ARP[step % 8]] * 2, t, 0.4, 'square', 0.02, 0.01);
+        if (step % 2 === 0) tone(chord[0] / 2, t, 0.3, 'sawtooth', 0.05, 0.01);
+        step++;
+      }
+
+      function tick(){
+        if (!audioCtx || audioCtx.state !== 'running') return;
+        while (nextT < audioCtx.currentTime + 0.7) { scheduleStep(Math.max(nextT, audioCtx.currentTime)); nextT += BEAT; }
+      }
+
+      function startMusic(){
+        if (started) return;
+        ensureAudio();
+        if (!audioCtx) return;
+        started = true;
+        if (BGM_URL) {
+          bgmAudio = new Audio(BGM_URL); bgmAudio.loop = true; bgmAudio.volume = 0.5; bgmAudio.muted = !soundEnabled;
+          bgmAudio.play().catch(()=>{});
+          ['pointerdown','keydown','touchstart'].forEach(ev => document.removeEventListener(ev, startMusic));
+          return;
+        }
+        master = audioCtx.createGain();
+        master.gain.value = soundEnabled ? 0.35 : 0;
+        master.connect(audioCtx.destination);
+        lp = audioCtx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1400; lp.connect(master);
+        nextT = audioCtx.currentTime + 0.1;
+        timer = setInterval(tick, 200);
+        ['pointerdown','keydown','touchstart'].forEach(ev => document.removeEventListener(ev, startMusic));
+      }
+      ['pointerdown','keydown','touchstart'].forEach(ev => document.addEventListener(ev, startMusic));
+
+      // Nút loa bật/tắt luôn cả nhạc nền
+      const oToggle = window.toggleSound;
+      window.toggleSound = function(){
+        oToggle();
+        if (bgmAudio) bgmAudio.muted = !soundEnabled;
+        if (master) master.gain.setTargetAtTime(soundEnabled ? 0.35 : 0, audioCtx.currentTime, 0.08);
+      };
+
+      // Tạm dừng khi chuyển tab
+      document.addEventListener('visibilitychange', () => {
+        if (!audioCtx || !started) return;
+        if (document.hidden) audioCtx.suspend(); else if (soundEnabled) { audioCtx.resume(); nextT = audioCtx.currentTime + 0.1; }
+      });
     })();
     </script>
 </body>
