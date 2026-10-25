@@ -236,7 +236,7 @@
                 <i class="text-cyan-400 text-sm" style="font-style:normal">👥</i>
                 <div class="text-xs">
                     <span class="text-slate-400 block leading-none text-[10px]">Dưới đất</span>
-                    <span id="hud-remaining-count" class="font-extrabold text-sm text-white">20</span>
+                    <span id="hud-remaining-count" class="font-extrabold text-sm text-white">83</span>
                 </div>
             </div>
 
@@ -310,7 +310,7 @@
             <div class="mb-4">
                 <div class="flex items-center justify-between text-xs font-semibold text-cyan-300 mb-2">
                     <span><i class="mr-1" style="font-style:normal">📋</i> Dán danh sách Họ và Tên:</span>
-                    <span id="roster-line-counter" class="bg-cyan-500/20 border border-cyan-400/30 px-2.5 py-0.5 rounded-full">20 học sinh</span>
+                    <span id="roster-line-counter" class="bg-cyan-500/20 border border-cyan-400/30 px-2.5 py-0.5 rounded-full">83 học sinh</span>
                 </div>
                 <textarea id="roster-textarea" rows="7" oninput="updateRosterCounter()"
                     class="w-full rounded-2xl bg-slate-900/90 border border-slate-700 focus:border-cyan-400 focus:outline-none p-3.5 text-sm text-slate-100 font-medium leading-relaxed select-text"
@@ -320,7 +320,7 @@
             <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
                 <div class="flex items-center gap-2">
                     <button onclick="loadSampleRoster()" class="text-xs bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-600 px-3 py-2 rounded-xl font-semibold transition">
-                        <i class="mr-1" style="font-style:normal">✨</i> Danh sách mẫu (20)
+                        <i class="mr-1" style="font-style:normal">✨</i> Danh sách lớp (83)
                     </button>
                     <button onclick="clearRosterInput()" class="text-xs bg-slate-800 hover:bg-rose-950/60 text-rose-300 border border-slate-600 px-3 py-2 rounded-xl font-semibold transition">
                         <i class="mr-1" style="font-style:normal">🗑️</i> Xóa trắng
@@ -548,11 +548,89 @@
         ];
 
         const DEFAULT_ROSTER = [
-            "Nguyễn Minh Tuấn", "Trần Thị Thảo Vy", "Lê Hoàng Bách", "Phạm Ngọc Ánh",
-            "Hoàng Gia Bảo", "Vũ Thị Mai Phương", "Đặng Quốc Khánh", "Bùi Thanh Hà",
-            "Đỗ Đức Mạnh", "Ngô Thùy Linh", "Dương Tuấn Kiệt", "Lý Hồng Nhung",
-            "Trương Quang Huy", "Phan Thanh Trúc", "Võ Minh Khôi", "Đinh Ngọc Hân",
-            "Hồ Anh Dũng", "Lương Khánh Huyền", "Tạ Quốc Việt", "Chu Phương Thảo"
+            "NGUYỄN HOÀNG AN",
+            "BÙI PHƯƠNG ANH",
+            "ĐOÀN THỊ VÂN ANH",
+            "LÊ PHƯƠNG ANH",
+            "NGUYỄN LÊ NGỌC ANH",
+            "NGUYỄN NGỌC ANH",
+            "NGUYỄN VÂN ANH",
+            "TRẦN HÀ ANH",
+            "VÕ QUỲNH ANH",
+            "NGUYỄN XUÂN BÁCH",
+            "PHẠM NGỌC BÍCH",
+            "ĐINH THUỲ CHANG",
+            "NGUYỄN BẠCH KHÁNH CHI",
+            "TRẦN MINH CHIẾN",
+            "HOÀNG VIỆT CƯỜNG",
+            "NGUYỄN NGỌC DIỆP",
+            "HOÀNG THỊ DIỆU",
+            "MAI PHƯƠNG DUNG",
+            "NGUYỄN TẤN DŨNG",
+            "HOÀNG ĐÔNG DƯƠNG",
+            "PHAN TÂM ĐAN",
+            "TRẦN HẢI ĐĂNG",
+            "BÙI HƯƠNG GIANG",
+            "VŨ NGUYỄN GIÁP",
+            "NGUYỄN NGỌC HÀ",
+            "TRƯƠNG THANH HÀ",
+            "TRẦN THỊ MINH HẠNH",
+            "ĐINH DIỄM HẰNG",
+            "LẠI NGỌC HÂN",
+            "PHẠM THỊ HẬU",
+            "NGUYỄN TRUNG HIẾU",
+            "LƯU VIỆT HOÀNG",
+            "HOÀNG ANH HÙNG",
+            "NGUYỄN KHÁNH HUYỀN",
+            "NGUYỄN TIẾN HƯNG",
+            "VŨ THỊ HUYỀN HƯƠNG",
+            "TRẦN VĂN KHIÊM",
+            "LÊ BẢO KIM",
+            "BÙI HÀ LINH",
+            "HÀ PHƯƠNG LINH",
+            "NGUYỄN DOÃN NGỌC LINH",
+            "PHAN THÙY LINH",
+            "QUÁCH KHÁNH LINH",
+            "TRỊNH DIỆU LINH",
+            "TRẦN ĐỨC LONG",
+            "NGUYỄN THỊ LY",
+            "PHÙNG QUỲNH MAI",
+            "NGUYỄN HÀ MINH",
+            "NGUYỄN HÀ MY",
+            "LÊ PHƯƠNG NAM",
+            "LÊ THU NGỌC",
+            "NGUYỄN KHÁNH NGỌC",
+            "TRẦN BẢO NGỌC",
+            "ĐỖ NGUYỄN THẢO NGUYÊN",
+            "NGUYỄN THỊ MINH NGUYỆT",
+            "NGUYỄN THỊ YẾN NHI",
+            "PHẠM THỊ NHUNG",
+            "ĐỖ PHẠM VÂN PHI",
+            "ĐOÀN NAM PHƯƠNG",
+            "NGUYỄN THỊ PHƯƠNG",
+            "LƯU HỮU QUÂN",
+            "HÀ CÔNG THÀNH",
+            "NGUYỄN PHƯƠNG THẢO",
+            "TRẦN THỊ PHƯƠNG THẢO",
+            "CHỬ THỊ HỒNG THẮM",
+            "CAO THỊ THU THÙY",
+            "NGUYỄN THỊ THÚY",
+            "NGUYỄN THỊ MINH THƯ",
+            "TẠ MINH THƯ",
+            "NGUYỄN VĂN TOÀN",
+            "NGUYỄN KIỀU TRANG",
+            "VŨ NGỌC TRANG",
+            "NGUYỄN THỊ THANH TRÚC",
+            "PHÙNG THÙY MỸ TÚ",
+            "HOÀNG GIAI TUỆ",
+            "LÊ THẢO UYÊN",
+            "TRẦN THỊ THỤC UYÊN",
+            "LÊ THỊ NGỌC VÂN",
+            "PHẠM VŨ ĐẠI VĨ",
+            "TRẦN TUẤN VŨ",
+            "NGUYỄN TRẦN HÀ VY",
+            "NGUYỄN THỊ HẢI YẾN",
+            "NGUYỄN VIỆT DŨNG"
         ];
 
         /********************************************************************
